@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const authController = require("../controllers/authController");
 
-/**
- * @swagger
- * /api/v1/auth/login:
- *   post:
- *     tags:
- *       ['Auth']
- *     summary: Login pengguna (Super Admin, Guru BK, Siswa)
- */
-router.post("/login", authController.login);
+router.post(
+  "/login",
+  authController.login
+  /*
+    #swagger.tags = ['Auth']
+    #swagger.summary = 'Login pengguna'
+    #swagger.description = 'Login untuk Super Admin, Guru BK, dan Siswa.'
+  */
+);
 
 module.exports = router;

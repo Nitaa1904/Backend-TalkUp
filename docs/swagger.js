@@ -1,4 +1,4 @@
-const swaggerAutogen = require("swagger-autogen")();
+const swaggerAutogen = require("swagger-autogen")({ autoHeaders: false });
 
 const doc = {
   info: {
@@ -8,8 +8,9 @@ const doc = {
     version: "1.0.0",
   },
   host: "localhost:3000",
-  basePath: "/api/v1",
   schemes: ["http"],
+  basePath: "/",
+  swagger: "2.0",
   securityDefinitions: {
     bearerAuth: {
       type: "apiKey",
@@ -18,7 +19,29 @@ const doc = {
       description: "Masukkan token JWT (format: Bearer <token>)",
     },
   },
-  security: [{ bearerAuth: [] }],
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
+  tags: [
+    {
+      name: "Auth",
+      description: "Endpoint untuk autentikasi pengguna (login).",
+    },
+    {
+      name: "Super Admin",
+      description: "Manajemen data Guru BK & Siswa oleh Super Admin.",
+    },
+    {
+      name: "Guru BK",
+      description: "Fitur untuk Guru BK (lihat siswa bimbingan).",
+    },
+    {
+      name: "Public",
+      description: "Endpoint publik yang tidak membutuhkan autentikasi.",
+    },
+  ],
 };
 
 const outputFile = "./swagger-output.json";

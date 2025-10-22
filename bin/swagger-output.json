@@ -6,7 +6,25 @@
     "version": "1.0.0"
   },
   "host": "localhost:3000",
-  "basePath": "/api/v1",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Endpoint untuk autentikasi pengguna (login)."
+    },
+    {
+      "name": "Super Admin",
+      "description": "Manajemen data Guru BK & Siswa oleh Super Admin."
+    },
+    {
+      "name": "Guru BK",
+      "description": "Fitur untuk Guru BK (lihat siswa bimbingan)."
+    },
+    {
+      "name": "Public",
+      "description": "Endpoint publik yang tidak membutuhkan autentikasi."
+    }
+  ],
   "schemes": [
     "http"
   ],
@@ -95,13 +113,12 @@
     },
     "/admin/add-guru-bk": {
       "post": {
-        "description": "",
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Tambah data guru BK",
+        "description": "Endpoint untuk menambah data Guru BK (hanya Super Admin).",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -137,18 +154,22 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/add-siswa": {
       "post": {
-        "description": "",
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Tambah data siswa",
+        "description": "Endpoint untuk menambah data siswa (hanya Super Admin).",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -193,19 +214,21 @@
           "404": {
             "description": "Not Found"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/users": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
+        "tags": [
+          "Super Admin"
         ],
+        "summary": "Lihat semua pengguna",
+        "description": "",
         "responses": {
           "200": {
             "description": "OK"
@@ -216,19 +239,21 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/guru-bk/siswa": {
       "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
+        "tags": [
+          "Guru BK"
         ],
+        "summary": "Ambil semua siswa bimbingan",
+        "description": "",
         "responses": {
           "200": {
             "description": "OK"
@@ -245,12 +270,21 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/auth/login": {
       "post": {
-        "description": "",
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login pengguna",
+        "description": "Login untuk Super Admin, Guru BK, dan Siswa.",
         "parameters": [
           {
             "name": "body",
@@ -286,7 +320,11 @@
     },
     "/public/guru-bk": {
       "get": {
-        "description": "",
+        "tags": [
+          "Public"
+        ],
+        "summary": "Ambil semua data Guru BK (publik)",
+        "description": "Endpoint publik tanpa autentikasi.",
         "responses": {
           "200": {
             "description": "OK"
