@@ -9,7 +9,7 @@ const { verifyToken, verifyRole } = require("../middlewares/authMiddleware");
 
 router.post(
   "/",
-  // verifyToken,
+  verifyToken,
   verifyRole(["guru_bk", "siswa"]),
   createDiskusi
   /*
@@ -32,7 +32,7 @@ router.post(
 
 router.get(
   "/",
-  // verifyToken,
+  verifyToken,
   getAllDiskusi
   /*
     #swagger.tags = ['Diskusi']
@@ -44,7 +44,7 @@ router.get(
 
 router.get(
   "/:id",
-  // verifyToken,
+  verifyToken,
   getDiskusiById
   /*
     #swagger.tags = ['Diskusi']
