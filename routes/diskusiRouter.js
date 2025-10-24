@@ -33,6 +33,7 @@ router.post(
 router.get(
   "/",
   verifyToken,
+  verifyRole(["guru_bk", "siswa"]),  
   getAllDiskusi
   /*
     #swagger.tags = ['Diskusi']
@@ -45,6 +46,7 @@ router.get(
 router.get(
   "/:id",
   verifyToken,
+  verifyRole(["guru_bk", "siswa"]),
   getDiskusiById
   /*
     #swagger.tags = ['Diskusi']
