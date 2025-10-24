@@ -377,9 +377,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "403": {
-            "description": "Forbidden"
           }
         },
         "security": [
@@ -394,6 +391,24 @@
         ],
         "summary": "List semua diskusi",
         "description": "Endpoint untuk mendapatkan daftar semua diskusi.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "default": 1,
+            "description": "Nomor halaman yang ingin ditampilkan. Default: 1"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number",
+            "default": 25,
+            "description": "Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"

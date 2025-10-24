@@ -24,7 +24,18 @@ const createDiskusi = async (req, res, next) => {
 
 const getAllDiskusi = async (req, res, next) => {
   try {
-    const list = await DiskusiModel.findAll({
+    // Get pagination parameters
+    const page = Math.max(1, parseInt(req.query.page) || 1);  // Pastikan page minimal 1
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 25));  // Batasi max 50 item per halaman
+    const offset = (page - 1) * limit;
+
+    // Get total count of all records and calculate total pages
+    const totalData = await DiskusiModel.count();
+    const totalPages = Math.max(1, Math.ceil(totalData / limit));  // Minimal 1 halaman
+
+    const { count, rows: list } = await DiskusiModel.findAndCountAll({
+      offset,
+      limit,
       order: [['tgl_post', 'DESC']],
       include: [
         {
@@ -40,7 +51,7 @@ const getAllDiskusi = async (req, res, next) => {
     });
 
     // transform anonim view dan detail siswa/guru
-    const transformed = list.map((d) => {
+    const data = list.map((d) => {
       const obj = d.toJSON();
       if (obj.pembuat) {
         // prepare minimal pembuat object (id, id_ref, role, email)
@@ -75,7 +86,13 @@ const getAllDiskusi = async (req, res, next) => {
       return obj;
     });
 
-    return res.status(200).json(transformed);
+    return res.status(200).json({
+      data,
+      page,
+      limit,
+      totalData,
+      totalPages
+    });
   } catch (err) {
     next(err);
   }

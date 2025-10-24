@@ -40,6 +40,8 @@ router.get(
     #swagger.summary = 'List semua diskusi'
     #swagger.description = 'Endpoint untuk mendapatkan daftar semua diskusi.'
     #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.parameters['page'] = { in: 'query', required: false, type: 'number', default: 1, description: 'Nomor halaman yang ingin ditampilkan. Default: 1' }
+    #swagger.parameters['limit'] = { in: 'query', required: false, type: 'number', default: 25, description: 'Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25' }
   */
 );
 
