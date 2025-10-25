@@ -31,7 +31,7 @@ router.post(
 
 router.get(
   '/:diskusiId',
-  // verifyToken,
+  verifyToken,
   getBalasanByDiskusiId
   /*
     #swagger.tags = ['Diskusi Balasan']
