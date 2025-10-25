@@ -4,6 +4,7 @@ const adminController = require("./adminController");
 const authController = require("./authController");
 const guruBkController = require("./guruBkController");
 const publicController = require("./publicController");
+const siswaController = require("./siswaController");
 
 module.exports = {
   exampleController,
@@ -12,4 +13,5 @@ module.exports = {
   authController,
   guruBkController,
   publicController,
+  siswaController,
 };
