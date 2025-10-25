@@ -1,5 +1,6 @@
 const { users, guru_bk, siswa } = require("../models");
 const bcrypt = require("bcryptjs");
+const Sequelize = require("sequelize");
 
 const addGuruBk = async (req, res, next) => {
   try {
@@ -35,6 +36,8 @@ const addGuruBk = async (req, res, next) => {
 };
 
 const addSiswa = async (req, res, next) => {
+  const t = await sequelize.transaction();
+
   try {
     const { email_sekolah, nama_lengkap, kelas, email, password, guruBkId } =
       req.body;
@@ -70,18 +73,28 @@ const addSiswa = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newSiswa = await siswa.create({
-      email_sekolah,
-      nama_lengkap,
-      kelas,
-      guruBkId,
-    });
 
-    const newUser = await users.create({
-      id_ref: newSiswa.id_siswa,
-      email,
-      password: hashedPassword,
-    });
+    const newSiswa = await siswa.create(
+      {
+        email_sekolah,
+        nama_lengkap,
+        kelas,
+        guruBkId,
+      },
+      { transaction: t }
+    );
+
+    const newUser = await users.create(
+      {
+        id_ref: newSiswa.id,
+        email,
+        password: hashedPassword,
+        role: "siswa",
+      },
+      { transaction: t }
+    );
+
+    await t.commit();
 
     res.status(201).json({
       status: "Success",
@@ -89,15 +102,20 @@ const addSiswa = async (req, res, next) => {
       data: {
         siswa: newSiswa,
         akun: {
-          id_user: newUser.id_user,
+          id_user: newUser.id,
           email: newUser.email,
           role: newUser.role,
         },
       },
     });
   } catch (error) {
-    console.error(error);
-    next(error);
+    await t.rollback();
+    console.error("[❌ ERROR ADD SISWA]", error);
+    res.status(500).json({
+      status: "Error",
+      message: "Gagal menambahkan siswa",
+      error: error.message,
+    });
   }
 };
 

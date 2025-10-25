@@ -15,4 +15,11 @@ router.get(
   */
 );
 
+router.get(
+  "/siswa/:id",
+  verifyToken,
+  verifyRole("guru_bk"),
+  guruBkController.getSiswaBimbinganById
+);
+
 module.exports = router;
