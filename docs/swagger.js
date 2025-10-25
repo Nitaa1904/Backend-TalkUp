@@ -45,6 +45,10 @@ const doc = {
       name: "Public",
       description: "Endpoint publik yang tidak membutuhkan autentikasi.",
     },
+    {
+      name: "Diskusi",
+      description: "Fitur forum diskusi",
+    },
   ],
 };
 
