@@ -38,6 +38,10 @@ const doc = {
       description: "Fitur untuk Guru BK (lihat siswa bimbingan).",
     },
     {
+      name: "Siswa",
+      description: "Fitur untuk Siswa (lihat dan ubah profil sendiri).",
+    },
+    {
       name: "Public",
       description: "Endpoint publik yang tidak membutuhkan autentikasi.",
     },

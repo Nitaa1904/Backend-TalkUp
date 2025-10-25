@@ -21,6 +21,10 @@
       "description": "Fitur untuk Guru BK (lihat siswa bimbingan)."
     },
     {
+      "name": "Siswa",
+      "description": "Fitur untuk Siswa (lihat dan ubah profil sendiri)."
+    },
+    {
       "name": "Public",
       "description": "Endpoint publik yang tidak membutuhkan autentikasi."
     }
@@ -113,30 +117,11 @@
     },
     "/admin/add-guru-bk": {
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nama": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "jabatan": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
+        "tags": [
+          "Super Admin"
         ],
+        "summary": "Tambah data guru BK",
+        "description": "Endpoint untuk menambah data Guru BK (hanya Super Admin).",
         "responses": {
           "201": {
             "description": "Created"
@@ -150,11 +135,21 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {}
       }
     },
     "/admin/guru-bk": {
       "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Lihat semua data guru BK",
         "description": "",
         "responses": {
           "200": {
@@ -169,18 +164,28 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/guru-bk/{id}": {
       "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Lihat data guru BK berdasarkan ID",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID Guru BK"
           }
         ],
         "responses": {
@@ -199,37 +204,26 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "put": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Perbarui data guru BK",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "nama": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "jabatan": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
+            "type": "string",
+            "description": "ID Guru BK"
           }
         ],
         "responses": {
@@ -248,16 +242,27 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {}
       },
       "delete": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Hapus data guru BK",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID Guru BK"
           }
         ],
         "responses": {
@@ -276,41 +281,21 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/add-siswa": {
       "post": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email_sekolah": {
-                  "example": "any"
-                },
-                "nama_lengkap": {
-                  "example": "any"
-                },
-                "kelas": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "guruBkId": {
-                  "example": "any"
-                }
-              }
-            }
-          }
+        "tags": [
+          "Super Admin"
         ],
+        "summary": "Tambah data siswa",
+        "description": "Endpoint untuk menambah data siswa (hanya Super Admin).",
         "responses": {
           "201": {
             "description": "Created"
@@ -329,12 +314,44 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "email_sekolah": "string",
+                "nama_lengkap": "string",
+                "kelas": "string",
+                "email": "string",
+                "password": "string",
+                "guruBkId": "integer"
+              },
+              "example": {
+                "email_sekolah": "nita@smktelkom.sch.id",
+                "nama_lengkap": "Nita Lestari",
+                "kelas": "X TKJ 1",
+                "email": "nita@smktelkom.id",
+                "password": "nita123",
+                "guruBkId": 29
+              }
+            }
           }
         }
       }
     },
     "/admin/siswa": {
       "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Lihat semua data siswa",
         "description": "",
         "responses": {
           "200": {
@@ -349,18 +366,28 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/siswa/{id}": {
       "get": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Lihat data siswa berdasarkan ID",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID Siswa"
           }
         ],
         "responses": {
@@ -379,37 +406,26 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "put": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Perbarui data siswa",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email_sekolah": {
-                  "example": "any"
-                },
-                "nama_lengkap": {
-                  "example": "any"
-                },
-                "kelas": {
-                  "example": "any"
-                },
-                "guruBkId": {
-                  "example": "any"
-                }
-              }
-            }
+            "type": "string",
+            "description": "ID Siswa"
           }
         ],
         "responses": {
@@ -427,17 +443,50 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "email_sekolah": "string",
+                "nama_lengkap": "string",
+                "kelas": "string",
+                "email": "string",
+                "password": "string",
+                "guruBkId": "integer"
+              },
+              "example": {
+                "email_sekolah": "nita@smktelkom.sch.id",
+                "nama_lengkap": "Nita Lestari",
+                "kelas": "X TKJ 1",
+                "email": "nita@smktelkom.id",
+                "password": "nita123",
+                "guruBkId": 29
+              }
+            }
           }
         }
       },
       "delete": {
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Hapus data siswa",
         "description": "",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID Siswa"
           }
         ],
         "responses": {
@@ -456,12 +505,21 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/admin/users": {
       "get": {
-        "description": "",
+        "tags": [
+          "Super Admin"
+        ],
+        "summary": "Lihat semua pengguna (Super Admin)",
+        "description": "Endpoint untuk melihat semua user yang terdaftar di sistem.",
         "responses": {
           "200": {
             "description": "OK"
@@ -472,7 +530,12 @@
           "403": {
             "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/guru-bk/siswa": {
@@ -481,7 +544,7 @@
           "Guru BK"
         ],
         "summary": "Ambil semua siswa bimbingan",
-        "description": "",
+        "description": "Endpoint untuk menampilkan seluruh siswa yang berada di bawah bimbingan Guru BK terkait.",
         "responses": {
           "200": {
             "description": "OK"
@@ -508,13 +571,18 @@
     },
     "/guru-bk/siswa/{id}": {
       "get": {
-        "description": "",
+        "tags": [
+          "Guru BK"
+        ],
+        "summary": "Ambil data siswa bimbingan berdasarkan ID",
+        "description": "Endpoint untuk menampilkan data detail siswa bimbingan berdasarkan ID siswa.",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "ID Siswa"
           }
         ],
         "responses": {
@@ -536,7 +604,12 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/auth/login": {
@@ -598,7 +671,11 @@
     },
     "/siswa/me": {
       "get": {
-        "description": "",
+        "tags": [
+          "Siswa"
+        ],
+        "summary": "Lihat profil saya",
+        "description": "Endpoint untuk mengambil data profil siswa yang sedang login.",
         "responses": {
           "200": {
             "description": "OK"
@@ -615,10 +692,19 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       },
       "put": {
-        "description": "",
+        "tags": [
+          "Siswa"
+        ],
+        "summary": "Perbarui profil saya",
+        "description": "Endpoint untuk memperbarui data profil siswa yang sedang login.",
         "parameters": [
           {
             "name": "body",
@@ -655,7 +741,12 @@
           "500": {
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
