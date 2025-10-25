@@ -49,6 +49,10 @@ const doc = {
       name: "Diskusi",
       description: "Fitur forum diskusi",
     },
+    {
+      name: "Diskusi Balasan",
+      description: "Fitur balasan diskusi",
+    },
   ],
 };
 
