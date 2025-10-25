@@ -13,6 +13,17 @@ router.post(
       #swagger.summary = 'Tambah data guru BK'
       #swagger.description = 'Endpoint untuk menambah data Guru BK (hanya Super Admin).'
       #swagger.security = [{ "bearerAuth": [] }]
+      #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Data guru BK yang akan ditambahkan',
+        required: true,
+        schema: {
+            nama : "Budi Santoso",
+              email: "budi@guru.com",
+              password: "guru123",
+              jabatan: "Guru BK Kelas XII"
+        }
+      }
       #swagger.requestBody = {
         required: true,
         content: {
@@ -71,6 +82,17 @@ router.put(
   #swagger.summary = 'Perbarui data guru BK'
   #swagger.parameters['id'] = { description: 'ID Guru BK', required: true }
   #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Data guru BK yang akan diperbaharui',
+        required: true,
+        schema: {
+            nama : "Budi Santoso",
+              email: "budi@guru.com",
+              password: "guru123",
+              jabatan: "Guru BK Kelas XII"
+        }
+      }
   #swagger.requestBody = {
         required: true,
         content: {
@@ -113,33 +135,23 @@ router.post(
   verifyToken,
   verifyRole("super_admin"),
   /* 
-  #swagger.tags = ['Super Admin']
-  #swagger.summary = 'Tambah data siswa'
-  #swagger.description = 'Endpoint untuk menambah data siswa (hanya Super Admin).'
-  #swagger.security = [{ "bearerAuth": [] }]
-  #swagger.requestBody = {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              email_sekolah: "string",
-              nama_lengkap: "string",
-              kelas: "string",
-              email: "string",
-              password: "string",
-              guruBkId: "integer"
-            },
-            example: {
-              email_sekolah: "nita@smktelkom.sch.id",
-              nama_lengkap: "Nita Lestari",
-              kelas: "X TKJ 1",
-              email: "nita@smktelkom.id",
-              password: "nita123",
-              guruBkId: 29
-            }
-          }
-        }
-     }
+    #swagger.tags = ['Super Admin']
+    #swagger.summary = 'Tambah data siswa'
+    #swagger.description = 'Endpoint untuk menambahkan data siswa (hanya Super Admin).'
+    #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      description: 'Data siswa yang akan ditambahkan',
+      schema: {
+        email_sekolah: "jiso@smktelkom.sch.id",
+        nama_lengkap: "jisoo yaa",
+        kelas: "X TIK 1",
+        email: "jisoo@smktelkom.id",
+        password: "jisoo123",
+        guruBkId: 33
+      }
+    }
   */
   adminController.addSiswa
 );
@@ -178,29 +190,19 @@ router.put(
   #swagger.summary = 'Perbarui data siswa'
   #swagger.parameters['id'] = { description: 'ID Siswa', required: true }
   #swagger.security = [{ "bearerAuth": [] }]
-  #swagger.requestBody = {
+  #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Data siswa yang akan diperbaharui',
         required: true,
-        content: {
-          "application/json": {
-            schema: {
-              email_sekolah: "string",
-              nama_lengkap: "string",
-              kelas: "string",
-              email: "string",
-              password: "string",
-              guruBkId: "integer"
-            },
-            example: {
-              email_sekolah: "nita@smktelkom.sch.id",
+        schema: {
+            email_sekolah: "nita@smktelkom.sch.id",
               nama_lengkap: "Nita Lestari",
               kelas: "X TKJ 1",
               email: "nita@smktelkom.id",
               password: "nita123",
               guruBkId: 29
-            }
-          }
         }
-     }
+      }
   */
   siswaController.updateSiswa
 );

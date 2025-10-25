@@ -1,6 +1,5 @@
-const { users, guru_bk, siswa } = require("../models");
+const { users, guru_bk, siswa, sequelize } = require("../models");
 const bcrypt = require("bcryptjs");
-const Sequelize = require("sequelize");
 
 const addGuruBk = async (req, res, next) => {
   try {
@@ -11,11 +10,7 @@ const addGuruBk = async (req, res, next) => {
       return res.status(400).json({ message: "Email sudah terdaftar" });
     }
 
-    const newGuruBk = await guru_bk.create({
-      nama,
-      jabatan,
-    });
-
+    const newGuruBk = await guru_bk.create({ nama, jabatan });
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await users.create({
@@ -75,12 +70,7 @@ const addSiswa = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newSiswa = await siswa.create(
-      {
-        email_sekolah,
-        nama_lengkap,
-        kelas,
-        guruBkId,
-      },
+      { email_sekolah, nama_lengkap, kelas, guruBkId },
       { transaction: t }
     );
 
@@ -119,7 +109,7 @@ const addSiswa = async (req, res, next) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const data = await users.findAll();
     res.json({ total: data.length, data });

@@ -25,6 +25,17 @@ router.put(
     #swagger.summary = 'Perbarui profil saya'
     #swagger.description = 'Endpoint untuk memperbarui data profil siswa yang sedang login.'
     #swagger.security = [{ "bearerAuth": [] }]
+    #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Data saya yang akan diperbaharui',
+        required: true,
+        schema: {
+            email_sekolah: "nita@smktelkom.sch.id",
+              nama_lengkap: "Nita Lestari",
+              email: "nita@smktelkom.id",
+              password: "nita123"
+        }
+      }
     */
   siswaController.updateMyProfile
 );
