@@ -47,8 +47,8 @@ router.get(
 
 router.get(
   "/:id",
-  // verifyToken,
-  // verifyRole(["guru_bk", "siswa", "super_admin"]),
+  verifyToken,
+  verifyRole(["guru_bk", "siswa", "super_admin"]),
   getDiskusiById
   /*
     #swagger.tags = ['Diskusi']
