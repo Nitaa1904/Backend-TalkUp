@@ -1,7 +1,7 @@
 const { siswa, guru_bk, users } = require("../models");
 const bcrypt = require("bcryptjs");
 
-const getAllGuruBk = async (req, res) => {
+const getAllGuruBk = async (req, res, next) => {
   try {
     const guru = await guru_bk.findAll({
       include: [
@@ -19,15 +19,11 @@ const getAllGuruBk = async (req, res) => {
       data: guru,
     });
   } catch (error) {
-    console.error("Error getAllGuruBk:", error);
-    res.status(500).json({
-      message: "Gagal menampilkan data guru BK",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getGuruBkById = async (req, res) => {
+const getGuruBkById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const guru = await guru_bk.findByPk(id, {
@@ -41,7 +37,9 @@ const getGuruBkById = async (req, res) => {
     });
 
     if (!guru) {
-      return res.status(404).json({ message: "Guru BK tidak ditemukan" });
+      const err = new Error("Guru BK tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     res.status(200).json({
@@ -57,14 +55,16 @@ const getGuruBkById = async (req, res) => {
   }
 };
 
-const updateGuruBk = async (req, res) => {
+const updateGuruBk = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { nama, email, jabatan, password } = req.body;
 
     const guru = await guru_bk.findByPk(id);
     if (!guru) {
-      return res.status(404).json({ message: "Guru BK tidak ditemukan" });
+      const err = new Error("Guru BK tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     await guru.update({ nama, email, jabatan });
@@ -88,15 +88,11 @@ const updateGuruBk = async (req, res) => {
       data: { guru, user },
     });
   } catch (error) {
-    console.error("Error updateGuruBk:", error);
-    res.status(500).json({
-      message: "Gagal memperbarui data guru BK",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteGuruBk = async (req, res) => {
+const deleteGuruBk = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -113,29 +109,27 @@ const deleteGuruBk = async (req, res) => {
       message: "Data Guru BK dan akun pengguna berhasil dihapus",
     });
   } catch (error) {
-    console.error("Error deleteGuruBk:", error);
-    res.status(500).json({
-      message: "Gagal menghapus data guru BK",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getSiswaBimbingan = async (req, res) => {
-  console.log("Dari token:", req.user);
-
+const getSiswaBimbingan = async (req, res, next) => {
   try {
     if (req.user.role !== "guru_bk") {
-      return res.status(403).json({
-        message: "Akses ditolak. Hanya guru BK yang bisa melihat data ini.",
-      });
+      const err = new Error(
+        "Akses ditolak. Hanya guru BK yang bisa melihat data ini."
+      );
+      err.statusCode = 403;
+      throw err;
     }
 
     const guruBkId = req.user.id_ref;
     if (!guruBkId) {
-      return res.status(400).json({
-        message: "Token tidak valid, id_ref guru BK tidak ditemukan",
-      });
+      const err = new Error(
+        "Token tidak valid, id_ref guru BK tidak ditemukan"
+      );
+      err.statusCode = 400;
+      throw err;
     }
 
     const list = await siswa.findAll({
@@ -155,28 +149,29 @@ const getSiswaBimbingan = async (req, res) => {
       data: list,
     });
   } catch (error) {
-    console.error("Error getSiswaBimbingan:", error);
-    res.status(500).json({
-      message: "Gagal mengambil siswa bimbingan",
-      error: error.message,
-    });
+    next(error);
   }
 };
-const getSiswaBimbinganById = async (req, res) => {
+
+const getSiswaBimbinganById = async (req, res, next) => {
   console.log("Dari token:", req.user);
 
   try {
     if (req.user.role !== "guru_bk") {
-      return res.status(403).json({
-        message: "Akses ditolak. Hanya guru BK yang bisa melihat data ini.",
-      });
+      const err = new Error(
+        "Akses ditolak. Hanya guru BK yang bisa melihat data ini."
+      );
+      err.statusCode = 403;
+      throw err;
     }
 
     const guruBkId = req.user.id_ref;
     if (!guruBkId) {
-      return res.status(400).json({
-        message: "Token tidak valid, id_ref guru BK tidak ditemukan",
-      });
+      const err = new Error(
+        "Token tidak valid, id_ref guru BK tidak ditemukan"
+      );
+      err.statusCode = 400;
+      throw err;
     }
 
     const { id } = req.params;
@@ -201,9 +196,9 @@ const getSiswaBimbinganById = async (req, res) => {
     });
 
     if (!data) {
-      return res.status(404).json({
-        message: "Siswa tidak ditemukan atau bukan bimbingan Anda.",
-      });
+      const err = new Error("Siswa tidak ditemukan atau bukan bimbingan Anda");
+      err.statusCode = 404;
+      throw err;
     }
 
     res.status(200).json({
@@ -211,11 +206,7 @@ const getSiswaBimbinganById = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error getSiswaBimbinganById:", error);
-    res.status(500).json({
-      message: "Gagal mengambil detail siswa bimbingan",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

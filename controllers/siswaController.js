@@ -1,6 +1,6 @@
 const { siswa, guru_bk, users } = require("../models");
 
-const getAllSiswa = async (req, res) => {
+const getAllSiswa = async (req, res, next) => {
   try {
     const data = await siswa.findAll({
       include: [
@@ -24,16 +24,11 @@ const getAllSiswa = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error getAllSiswa:", error);
-    res.status(500).json({
-      status: "error",
-      message: "Gagal menampilkan data siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getSiswaById = async (req, res) => {
+const getSiswaById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = await siswa.findByPk(id, {
@@ -52,10 +47,9 @@ const getSiswaById = async (req, res) => {
     });
 
     if (!data) {
-      return res.status(404).json({
-        status: "error",
-        message: "Siswa tidak ditemukan",
-      });
+      const err = new Error("Siswa tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     res.status(200).json({
@@ -64,26 +58,20 @@ const getSiswaById = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error getSiswaById:", error);
-    res.status(500).json({
-      status: "error",
-      message: "Gagal menampilkan detail siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const updateSiswa = async (req, res) => {
+const updateSiswa = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { email_sekolah, nama_lengkap, kelas, guruBkId } = req.body;
 
     const data = await siswa.findByPk(id);
     if (!data) {
-      return res.status(404).json({
-        status: "error",
-        message: "Siswa tidak ditemukan",
-      });
+      const err = new Error("Siswa tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     await data.update({
@@ -99,25 +87,19 @@ const updateSiswa = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error updateSiswa:", error);
-    res.status(500).json({
-      status: "error",
-      message: "Gagal memperbarui data siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const deleteSiswa = async (req, res) => {
+const deleteSiswa = async (req, res, next) => {
   try {
     const { id } = req.params;
     const data = await siswa.findByPk(id);
 
     if (!data) {
-      return res.status(404).json({
-        status: "error",
-        message: "Siswa tidak ditemukan",
-      });
+      const err = new Error("Siswa tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     await data.destroy();
@@ -127,21 +109,18 @@ const deleteSiswa = async (req, res) => {
       message: "Data siswa berhasil dihapus",
     });
   } catch (error) {
-    console.error("Error deleteSiswa:", error);
-    res.status(500).json({
-      status: "error",
-      message: "Gagal menghapus data siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getMyProfile = async (req, res) => {
+const getMyProfile = async (req, res, next) => {
   try {
     if (req.user.role !== "siswa") {
-      return res.status(403).json({
-        message: "Akses ditolak. Hanya siswa yang bisa melihat profil ini.",
-      });
+      const err = new Error(
+        "Akses ditolak. Hanya siswa yang bisa melihat profil ini."
+      );
+      err.statusCode = 403;
+      throw err;
     }
 
     const siswaId = req.user.id_ref;
@@ -161,9 +140,9 @@ const getMyProfile = async (req, res) => {
     });
 
     if (!data) {
-      return res.status(404).json({
-        message: "Data siswa tidak ditemukan",
-      });
+      const err = new Error("Data siswa tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     res.status(200).json({
@@ -171,20 +150,18 @@ const getMyProfile = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error getMyProfile:", error);
-    res.status(500).json({
-      message: "Gagal menampilkan profil siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const updateMyProfile = async (req, res) => {
+const updateMyProfile = async (req, res, next) => {
   try {
     if (req.user.role !== "siswa") {
-      return res.status(403).json({
-        message: "Akses ditolak. Hanya siswa yang bisa memperbarui profil ini.",
-      });
+      const err = new Error(
+        "Akses ditolak. Hanya siswa yang bisa melihat profil ini."
+      );
+      err.statusCode = 403;
+      throw err;
     }
 
     const siswaId = req.user.id_ref;
@@ -192,9 +169,9 @@ const updateMyProfile = async (req, res) => {
 
     const data = await siswa.findByPk(siswaId);
     if (!data) {
-      return res.status(404).json({
-        message: "Data siswa tidak ditemukan",
-      });
+      const err = new Error("Data siswa tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
     }
 
     await data.update({
@@ -208,11 +185,7 @@ const updateMyProfile = async (req, res) => {
       data,
     });
   } catch (error) {
-    console.error("Error updateMyProfile:", error);
-    res.status(500).json({
-      message: "Gagal memperbarui profil siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
