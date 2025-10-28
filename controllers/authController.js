@@ -2,16 +2,23 @@ const { users } = require("../models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     const user = await users.findOne({ where: { email } });
-    if (!user)
-      return res.status(404).json({ message: "Email tidak ditemukan" });
+    if (!user) {
+      const err = new Error("Email tidak ditemukan");
+      err.statusCode = 404;
+      throw err;
+    }
 
     const valid = await bcrypt.compare(password, user.password);
-    if (!valid) return res.status(401).json({ message: "Password salah" });
+    if (!valid) {
+      const err = new Error("Password salah");
+      err.statusCode = 401;
+      throw err;
+    }
 
     const token = jwt.sign(
       {
@@ -31,10 +38,7 @@ const login = async (req, res) => {
       token,
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Login Gagal",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

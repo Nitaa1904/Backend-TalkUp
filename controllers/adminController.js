@@ -7,7 +7,9 @@ const addGuruBk = async (req, res, next) => {
 
     const existingUser = await users.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "Email sudah terdaftar" });
+      const error = new Error("Email sudah terdaftar");
+      error.status = 400;
+      throw error;
     }
 
     const newGuruBk = await guru_bk.create({ nama, jabatan });
@@ -53,18 +55,16 @@ const addSiswa = async (req, res, next) => {
 
     const existingUser = await users.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({
-        status: "Failed",
-        message: "Email sudah terdaftar",
-      });
+      const error = new Error("Email sudah terdaftar");
+      error.status = 400;
+      throw error;
     }
 
     const guruBkExist = await guru_bk.findByPk(guruBkId);
     if (!guruBkExist) {
-      return res.status(404).json({
-        status: "Failed",
-        message: "Guru BK dengan ID tersebut tidak ditemukan",
-      });
+      const error = new Error("Guru BK dengan ID tersebut tidak ditemukan");
+      error.status = 404;
+      throw error;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -100,12 +100,7 @@ const addSiswa = async (req, res, next) => {
     });
   } catch (error) {
     await t.rollback();
-    console.error("[❌ ERROR ADD SISWA]", error);
-    res.status(500).json({
-      status: "Error",
-      message: "Gagal menambahkan siswa",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

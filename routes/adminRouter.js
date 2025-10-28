@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { verifyToken, verifyRole } = require("../middlewares/authMiddleware");
+const { check } = require("express-validator");
+const validationMiddleware = require("../middlewares/validationMiddleware");
 const adminController = require("../controllers/adminController");
 const guruBkController = require("../controllers/guruBkController");
 const siswaController = require("../controllers/siswaController");
@@ -9,6 +11,15 @@ router.post(
   "/add-guru-bk",
   verifyToken,
   verifyRole("super_admin"),
+  [
+    check("nama").notEmpty().withMessage("Nama wajib diisi"),
+    check("email").isEmail().withMessage("Email tidak valid"),
+    check("password")
+      .isLength({ min: 6 })
+      .withMessage("Password minimal 6 karakter"),
+    check("jabatan").notEmpty().withMessage("Jabatan wajib diisi"),
+  ],
+  validationMiddleware,
   /* #swagger.tags = ['Super Admin']
       #swagger.summary = 'Tambah data guru BK'
       #swagger.description = 'Endpoint untuk menambah data Guru BK (hanya Super Admin).'
@@ -134,6 +145,17 @@ router.post(
   "/add-siswa",
   verifyToken,
   verifyRole("super_admin"),
+  [
+    check("email_sekolah").isEmail().withMessage("Email sekolah tidak valid"),
+    check("nama_lengkap").notEmpty().withMessage("Nama lengkap wajib diisi"),
+    check("kelas").notEmpty().withMessage("Kelas wajib diisi"),
+    check("email").isEmail().withMessage("Email tidak valid"),
+    check("password")
+      .isLength({ min: 6 })
+      .withMessage("Password minimal 6 karakter"),
+    check("guruBkId").isInt().withMessage("guruBkId harus berupa angka"),
+  ],
+  validationMiddleware,
   /* 
     #swagger.tags = ['Super Admin']
     #swagger.summary = 'Tambah data siswa'
@@ -185,6 +207,23 @@ router.put(
   "/siswa/:id",
   verifyToken,
   verifyRole("super_admin"),
+  [
+    check("email_sekolah")
+      .optional()
+      .isEmail()
+      .withMessage("Email sekolah tidak valid"),
+    check("nama_lengkap")
+      .optional()
+      .notEmpty()
+      .withMessage("Nama lengkap wajib diisi"),
+    check("kelas").optional().notEmpty().withMessage("Kelas wajib diisi"),
+    check("email").optional().isEmail().withMessage("Email tidak valid"),
+    check("password")
+      .optional()
+      .isLength({ min: 6 })
+      .withMessage("Password minimal 6 karakter"),
+  ],
+  validationMiddleware,
   /* 
   #swagger.tags = ['Super Admin']
   #swagger.summary = 'Perbarui data siswa'
