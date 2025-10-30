@@ -31,6 +31,10 @@
     {
       "name": "Diskusi",
       "description": "Fitur forum diskusi"
+    },
+    {
+      "name": "Konseling",
+      "description": "Fitur permintaan konseling oleh siswa"
     }
   ],
   "schemes": [
@@ -690,6 +694,62 @@
             "description": "OK"
           }
         }
+      }
+    },
+    "/konseling/": {
+      "post": {
+        "tags": [
+          "Konseling"
+        ],
+        "summary": "Buat permintaan konseling",
+        "description": "Endpoint untuk siswa membuat permintaan konseling.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "jenis_sesi": {
+                  "type": "string",
+                  "example": "Online"
+                },
+                "topik_konseling": {
+                  "type": "string",
+                  "example": "Belajar"
+                },
+                "deskripsi_masalah": {
+                  "type": "string",
+                  "example": "Saya kesulitan fokus belajar di rumah."
+                }
+              }
+            },
+            "description": "Masukkan detail permintaan konseling. Field id_guru_bk tidak perlu dikirim (otomatis)."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/siswa/me": {
