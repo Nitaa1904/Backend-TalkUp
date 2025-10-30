@@ -11,7 +11,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     await queryInterface.changeColumn("users", "role", {
-      type: Sequelize.STRING(10),
+      type: Sequelize.STRING(20),
       allowNull: false,
     });
   },
