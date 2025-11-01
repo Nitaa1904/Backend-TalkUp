@@ -2,21 +2,32 @@ const { diskusi: DiskusiModel, users: UsersModel } = require('../models');
 
 const createDiskusi = async (req, res, next) => {
   try {
-  const { judul, konten, is_anonim } = req.body;
+    const { judul, konten, is_anonim } = req.body;
     
-    if (!judul || !konten) {
-      return res.status(400).json({ message: 'judul dan konten wajib diisi' });
+    // Get user ID from token
+    const userId = req.user?.id_user;
+    if (!userId) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "Token tidak valid atau user ID tidak ditemukan",
+        isSuccess: false,
+        data: null
+      });
     }
 
-  const userId = req.user.id_user;
     const newDiskusi = await DiskusiModel.create({
       id_pembuat: userId,
-      topik: judul,
-      isi_diskusi: konten,
+      judul: judul,
+      konten: konten,
       is_anonim: !!is_anonim
     });
 
-    return res.status(201).json(newDiskusi);
+    return res.status(201).json({
+      status: "Success",
+      message: "Diskusi berhasil dibuat",
+      isSuccess: true,
+      data: newDiskusi
+    });
   } catch (err) {
     next(err);
   }

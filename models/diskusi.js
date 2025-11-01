@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    topik: {
+    judul: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    isi_diskusi: {
+    konten: {
       type: DataTypes.TEXT,
       allowNull: false
     },

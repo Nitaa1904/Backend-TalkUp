@@ -1,4 +1,5 @@
 const express = require("express");
+const { body } = require("express-validator");
 const router = express.Router();
 const {
   createDiskusi,
@@ -6,11 +7,13 @@ const {
   getDiskusiById,
 } = require("../controllers/diskusiController");
 const { verifyToken, verifyRole } = require("../middlewares/authMiddleware");
+const validationMiddleware = require("../middlewares/validationMiddleware");
 
 router.post(
   "/",
   verifyToken,
   verifyRole(["guru_bk", "siswa"]),
+  validationMiddleware,
   createDiskusi
   /*
     #swagger.tags = ['Diskusi']
@@ -22,8 +25,8 @@ router.post(
       description: 'Data diskusi yang akan dibuat',
       required: true,
       schema: {
-        topik: 'Fokus Belajar',
-        isi_diskusi: 'Bagaimana cara fokus saat ujian?',
+        judul: 'Fokus Belajar',
+        konten: 'Bagaimana cara fokus saat ujian?',
         is_anonim: false
       }
     }
