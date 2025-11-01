@@ -30,33 +30,33 @@ const doc = {
       description: "Endpoint untuk autentikasi pengguna (login).",
     },
     {
-      name: "Super Admin",
-      description: "Manajemen data Guru BK & Siswa oleh Super Admin.",
+      name: "Diskusi",
+      description: "Fitur forum diskusi",
+    },
+    {
+      name: "Diskusi Balasan",
+      description: "Fitur balasan diskusi",
     },
     {
       name: "Guru BK",
       description: "Fitur untuk Guru BK (lihat siswa bimbingan).",
     },
     {
-      name: "Siswa",
-      description: "Fitur untuk Siswa (lihat dan ubah profil sendiri).",
+      name: "Konseling",
+      description: "Fitur permintaan konseling oleh siswa",
     },
     {
       name: "Public",
       description: "Endpoint publik yang tidak membutuhkan autentikasi.",
     },
     {
-      name: "Diskusi",
-      description: "Fitur forum diskusi",
+      name: "Siswa",
+      description: "Fitur untuk Siswa (lihat dan ubah profil sendiri).",
     },
     {
-      name: "Konseling",
-      description: "Fitur permintaan konseling oleh siswa",
-    },
-    {
-      name: "Diskusi Balasan",
-      description: "Fitur balasan diskusi",
-    },
+      name: "Super Admin",
+      description: "Manajemen data Guru BK & Siswa oleh Super Admin.",
+    }
   ],
 };
 
