@@ -2,21 +2,46 @@ const { diskusi: DiskusiModel, users: UsersModel } = require('../models');
 
 const createDiskusi = async (req, res, next) => {
   try {
-  const { judul, konten, is_anonim } = req.body;
+    const { judul, konten, is_anonim } = req.body;
     
-    if (!judul || !konten) {
-      return res.status(400).json({ message: 'judul dan konten wajib diisi' });
+    const ref_id = req.user?.id_ref;
+    if (!ref_id) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "Token tidak valid",
+        isSuccess: false,
+        data: null
+      });
+    }
+    // Get user ID from users table based on id_ref
+    const user = await UsersModel.findOne({
+      where: { id_ref: ref_id }
+    });
+    
+    const userId = user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "user ID tidak ditemukan",
+        isSuccess: false,
+        data: null
+      });
     }
 
-  const userId = req.user.id_user;
     const newDiskusi = await DiskusiModel.create({
       id_pembuat: userId,
-      topik: judul,
-      isi_diskusi: konten,
+      judul: judul,
+      konten: konten,
       is_anonim: !!is_anonim
     });
 
-    return res.status(201).json(newDiskusi);
+    return res.status(201).json({
+      status: "Success",
+      message: "Diskusi berhasil dibuat",
+      isSuccess: true,
+      data: newDiskusi
+    });
   } catch (err) {
     next(err);
   }
@@ -36,7 +61,7 @@ const getAllDiskusi = async (req, res, next) => {
     const { count, rows: list } = await DiskusiModel.findAndCountAll({
       offset,
       limit,
-      order: [['tgl_post', 'DESC']],
+      order: [['id_diskusi', 'ASC']],
       include: [
         {
           model: UsersModel,
@@ -103,6 +128,7 @@ const getDiskusiById = async (req, res, next) => {
     const { id } = req.params;
     const found = await DiskusiModel.findOne({
       where: { id_diskusi: id },
+      order: [['id_diskusi', 'ASC']],
       include: [{
         model: UsersModel,
         as: 'pembuat',

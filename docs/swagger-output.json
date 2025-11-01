@@ -848,11 +848,11 @@
             "schema": {
               "type": "object",
               "properties": {
-                "topik": {
+                "judul": {
                   "type": "string",
                   "example": "Fokus Belajar"
                 },
-                "isi_diskusi": {
+                "konten": {
                   "type": "string",
                   "example": "Bagaimana cara fokus saat ujian?"
                 },
