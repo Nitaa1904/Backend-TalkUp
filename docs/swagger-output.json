@@ -13,28 +13,32 @@
       "description": "Endpoint untuk autentikasi pengguna (login)."
     },
     {
-      "name": "Super Admin",
-      "description": "Manajemen data Guru BK & Siswa oleh Super Admin."
+      "name": "Diskusi",
+      "description": "Fitur forum diskusi"
+    },
+    {
+      "name": "Diskusi Balasan",
+      "description": "Fitur balasan diskusi"
     },
     {
       "name": "Guru BK",
       "description": "Fitur untuk Guru BK (lihat siswa bimbingan)."
     },
     {
-      "name": "Siswa",
-      "description": "Fitur untuk Siswa (lihat dan ubah profil sendiri)."
+      "name": "Konseling",
+      "description": "Fitur permintaan konseling oleh siswa"
     },
     {
       "name": "Public",
       "description": "Endpoint publik yang tidak membutuhkan autentikasi."
     },
     {
-      "name": "Diskusi",
-      "description": "Fitur forum diskusi"
+      "name": "Siswa",
+      "description": "Fitur untuk Siswa (lihat dan ubah profil sendiri)."
     },
     {
-      "name": "Konseling",
-      "description": "Fitur permintaan konseling oleh siswa"
+      "name": "Super Admin",
+      "description": "Manajemen data Guru BK & Siswa oleh Super Admin."
     }
   ],
   "schemes": [
@@ -960,6 +964,108 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/balasan/": {
+      "post": {
+        "tags": [
+          "Diskusi Balasan"
+        ],
+        "summary": "Menambahkan balasan ke diskusi",
+        "description": "Endpoint untuk menambahkan balasan ke dalam diskusi (hanya Guru BK dan Siswa).",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Data balasan yang akan ditambahkan",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id_diskusi": {
+                  "type": "number",
+                  "example": 1
+                },
+                "isi_balasan": {
+                  "type": "string",
+                  "example": "Ini adalah isi balasan untuk diskusi"
+                },
+                "is_anonim": {
+                  "type": "boolean",
+                  "example": false
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/balasan/{diskusiId}": {
+      "get": {
+        "tags": [
+          "Diskusi Balasan"
+        ],
+        "summary": "Mendapatkan daftar balasan diskusi",
+        "description": "Endpoint untuk mendapatkan daftar balasan dari sebuah diskusi.",
+        "parameters": [
+          {
+            "name": "diskusiId",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID diskusi"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Nomor halaman",
+            "type": "integer",
+            "default": 1
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Jumlah data per halaman (maks 50)",
+            "type": "integer",
+            "default": 25
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
       }
     }
   },

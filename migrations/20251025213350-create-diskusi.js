@@ -1,5 +1,6 @@
 'use strict';
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('diskusi', {
@@ -17,7 +18,7 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       judul: {
         type: Sequelize.STRING(255),
@@ -29,34 +30,32 @@ module.exports = {
       },
       is_anonim: {
         type: Sequelize.BOOLEAN,
-        allowNull: false,
         defaultValue: false
       },
       tgl_post: {
         type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.fn('NOW')
+        defaultValue: Sequelize.literal('NOW()')
       },
       jumlah_balasan: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         defaultValue: 0
-      }
-      ,
+      },
       created_at: {
-        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('NOW')
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('NOW()')
       },
       updated_at: {
-        type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.fn('NOW')
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('NOW()')
       }
     });
+
+    await queryInterface.addIndex('diskusi', ['id_pembuat']);
   },
 
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('diskusi');
   }
 };
