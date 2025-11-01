@@ -14,7 +14,30 @@ const createBalasan = async (req, res, next) => {
       return res.status(404).json({ message: 'Diskusi tidak ditemukan' });
     }
 
-    const userId = req.user.id_user;
+    const ref_id = req.user?.id_ref;
+    if (!ref_id) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "Token tidak valid",
+        isSuccess: false,
+        data: null
+      });
+    }
+    // Get user ID from users table based on id_ref
+    const user = await UsersModel.findOne({
+      where: { id_ref: ref_id }
+    });
+    
+    const userId = user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "user ID tidak ditemukan",
+        isSuccess: false,
+        data: null
+      });
+    }
     const newBalasan = await DiskusiBalasanModel.create({
       id_diskusi,
       id_user: userId,

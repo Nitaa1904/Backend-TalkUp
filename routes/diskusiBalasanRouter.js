@@ -1,14 +1,32 @@
 const express = require('express');
+const { body } = require('express-validator');
 const router = express.Router();
-const { 
-  createBalasan, 
-  getBalasanByDiskusiId 
+const {
+  createBalasan,
+  getBalasanByDiskusiId
 } = require('../controllers/diskusiBalasanController');
 const { verifyToken, verifyRole } = require('../middlewares/authMiddleware');
+const validationMiddleware = require('../middlewares/validationMiddleware');
 
 router.post(
   '/',
   verifyToken,
+  [
+    body('id_diskusi')
+      .notEmpty()
+      .withMessage('ID diskusi wajib diisi')
+      .isInt({ min: 1 })
+      .withMessage('ID diskusi harus berupa angka positif'),
+    body('isi_balasan')
+      .notEmpty()
+      .isLength({ min: 1 })
+      .withMessage('Isi balasan wajib diisi'),
+    body('is_anonim')
+      .optional()
+      .isBoolean()
+      .withMessage('Is_anonim harus berupa boolean (true/false)')
+  ],
+  validationMiddleware,
   verifyRole(['guru_bk', 'siswa']),
   createBalasan
   /*
