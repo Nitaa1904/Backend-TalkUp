@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "id_guru_bk",
         as: "guru_bk",
       });
+
+      Konseling.hasOne(models.DetailKonseling, {
+        foreignKey: "id_konseling",
+        as: "detail_konseling",
+      });
     }
   }
   Konseling.init(
