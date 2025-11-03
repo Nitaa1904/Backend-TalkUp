@@ -8,6 +8,11 @@ module.exports = (sequelize, DataTypes) => {
         as: "siswa_bimbingan",
       });
 
+      guru_bk.hasMany(models.Konseling, {
+        foreignKey: "id_guru_bk",
+        as: "konseling_requests",
+      });
+
       guru_bk.hasOne(models.users, {
         foreignKey: "id_ref",
         constraints: false,

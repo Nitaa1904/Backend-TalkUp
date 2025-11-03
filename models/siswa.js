@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: "SET NULL",
         onUpdate: "CASCADE",
       });
+      
+      siswa.hasMany(models.Konseling, {
+        foreignKey: "id_siswa",
+        as: "konseling_requests",
+      });
+      
       siswa.hasOne(models.users, {
         foreignKey: "id_ref",
         constraints: false,
