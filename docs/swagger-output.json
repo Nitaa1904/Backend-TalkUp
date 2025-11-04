@@ -815,6 +815,26 @@
                 "status": {
                   "type": "string",
                   "example": "Disetujui"
+                },
+                "tgl_sesi": {
+                  "type": "string",
+                  "example": "2025-11-10"
+                },
+                "jam_sesi": {
+                  "type": "string",
+                  "example": "09:30"
+                },
+                "link_atau_ruang": {
+                  "type": "string",
+                  "example": "Ruang BK Lt.2"
+                },
+                "balasan_untuk_siswa": {
+                  "type": "string",
+                  "example": "Silakan hadir tepat waktu ya!"
+                },
+                "catatan_guru_bk": {
+                  "type": "string",
+                  "example": "Perhatikan masalah kedisiplinan siswa."
                 }
               }
             },

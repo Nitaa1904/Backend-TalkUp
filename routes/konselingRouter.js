@@ -73,6 +73,26 @@ router.put(
       .withMessage("Status wajib diisi")
       .isIn(["Disetujui", "Ditolak"])
       .withMessage("Status tidak sesuai"),
+    check("tgl_sesi")
+      .optional({ checkFalsy: true })
+      .isISO8601()
+      .withMessage("Format tanggal tidak valid (YYYY-MM-DD)"),
+    check("jam_sesi")
+      .optional({ checkFalsy: true })
+      .matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
+      .withMessage("Format jam tidak valid (HH:mm)"),
+    check("link_atau_ruang")
+      .optional({ checkFalsy: true })
+      .isString()
+      .withMessage("Link atau ruang harus berupa teks"),
+    check("balasan_untuk_siswa")
+      .optional({ checkFalsy: true })
+      .isString()
+      .withMessage("Balasan untuk siswa harus berupa teks"),
+    check("catatan_guru_bk")
+      .optional({ checkFalsy: true })
+      .isString()
+      .withMessage("Catatan guru BK harus berupa teks"),
   ],
   validationMiddleware,
   /*
@@ -90,7 +110,12 @@ router.put(
       in: 'body',
       required: true,
       schema: {
-          status: "Disetujui"
+          "status": "Disetujui",
+              "tgl_sesi": "2025-11-10",
+              "jam_sesi": "09:30",
+              "link_atau_ruang": "Ruang BK Lt.2",
+              "balasan_untuk_siswa": "Silakan hadir tepat waktu ya!",
+              "catatan_guru_bk": "Perhatikan masalah kedisiplinan siswa."
       },
       description: 'Status pengajuan konseling'
   }

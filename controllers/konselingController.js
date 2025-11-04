@@ -1,4 +1,5 @@
 const { siswa, guru_bk, Konseling, DetailKonseling } = require("../models");
+const notificationService = require("../services/notificationService");
 
 const createKonseling = async (req, res, next) => {
   try {
@@ -87,7 +88,14 @@ const getKonselingByGuruBk = async (req, res, next) => {
 const updateStatusKonseling = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const {
+      status,
+      tgl_sesi,
+      jam_sesi,
+      link_atau_ruang,
+      balasan_untuk_siswa,
+      catatan_guru_bk,
+    } = req.body;
 
     const konseling = await Konseling.findByPk(id, {
       include: [
@@ -120,16 +128,41 @@ const updateStatusKonseling = async (req, res, next) => {
     let detailKonseling = null;
 
     if (status === "Disetujui") {
-      detailKonseling = await DetailKonseling.findOne({
+      let detailKonseling = await DetailKonseling.findOne({
         where: { id_konseling: id },
       });
 
       if (!detailKonseling) {
+        // kalau belum ada, buat baru
         detailKonseling = await DetailKonseling.create({
           id_konseling: id,
+          tgl_sesi,
+          jam_sesi,
+          link_atau_ruang,
+          balasan_untuk_siswa,
+          catatan_guru_bk,
+        });
+      } else {
+        // kalau sudah ada, update data
+        await detailKonseling.update({
+          tgl_sesi,
+          jam_sesi,
+          link_atau_ruang,
+          balasan_untuk_siswa,
+          catatan_guru_bk,
         });
       }
     }
+
+    const siswaEmail = konseling.siswa?.email_sekolah;
+    const siswaNama = konseling.siswa?.nama_lengkap;
+    const siswaId = konseling.siswa?.id;
+
+    await notificationService.sendNotification(
+      siswaEmail,
+      `Halo ${siswaNama}, status pengajuan konseling kamu telah diperbarui menjadi "${status}".`,
+      siswaId
+    );
 
     const responseData = {
       id_konseling: konseling.id,
