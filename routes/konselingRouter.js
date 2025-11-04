@@ -27,7 +27,7 @@ router.post(
   validationMiddleware,
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Buat permintaan konseling'
+  #swagger.summary = 'Siswa Buat permintaan konseling'
   #swagger.description = 'Endpoint untuk siswa membuat permintaan konseling.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['body'] = {
@@ -42,6 +42,60 @@ router.post(
   }
   */
   konselingController.createKonseling
+);
+
+router.get(
+  "/guru/:id_guru_bk",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Tampilkan daftar pengajuan konseling untuk Guru BK'
+  #swagger.description = 'Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id_guru_bk'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Guru BK'
+  }
+  */
+  konselingController.getKonselingByGuruBk
+);
+
+router.put(
+  "/:id",
+  verifyToken,
+  verifyRole("guru_bk"),
+  [
+    check("status")
+      .notEmpty()
+      .withMessage("Status wajib diisi")
+      .isIn(["Disetujui", "Ditolak"])
+      .withMessage("Status tidak sesuai"),
+  ],
+  validationMiddleware,
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Update status konseling oleh Guru BK'
+  #swagger.description = 'Endpoint untuk Guru BK mengubah persetujuan pengajuan konseling. Jika disetujui, akan otomatis membuat entry di tabel detail_konseling.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Konseling'
+  }
+  #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+          status: "Disetujui"
+      },
+      description: 'Status pengajuan konseling'
+  }
+  */
+  konselingController.updateStatusKonseling
 );
 
 module.exports = router;

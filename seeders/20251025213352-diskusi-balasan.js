@@ -29,11 +29,11 @@ module.exports = {
 
     const now = new Date();
     const replies = [
-      // Replies to first discussion (Tips Belajar Efektif)
+      // Replies to first discussion (Masalah Belajar)
       {
         id_diskusi: discussions[0].id_diskusi,
         id_user: users.find(u => u.role === 'siswa' && u.name === 'Nata')?.id || users[0].id,
-        isi_balasan: 'Terima kasih Bu atas tipsnya. Saya akan coba terapkan. Kalau untuk mata pelajaran yang banyak hafalan, ada saran khusus?',
+        isi_balasan: 'Saya sering kesulitan untuk konsentrasi saat belajar. Apa ada tips dari BK untuk mengatasi masalah ini?',
         is_anonim: false,
         created_at: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 3600000), // 1 hour after post
         updated_at: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 3600000)
@@ -49,7 +49,7 @@ module.exports = {
       {
         id_diskusi: discussions[0].id_diskusi,
         id_user: users.find(u => u.role === 'siswa' && u.name === 'Lina Marlina')?.id || users[2].id,
-        isi_balasan: 'Saya biasanya belajar sambil mendengarkan musik klasik, ternyata bisa lebih fokus!',
+        isi_balasan: 'Saya juga mengalami hal yang serupa. Musik klasik memang membantu saya fokus better!',
         is_anonim: true, // Anonymous reply
         created_at: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 10800000), // 3 hours after post
         updated_at: new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000 + 10800000)
@@ -67,17 +67,17 @@ module.exports = {
       {
         id_diskusi: discussions[1].id_diskusi,
         id_user: users.find(u => u.role === 'siswa' && u.name === 'Andre Saputra')?.id || users[3].id,
-        isi_balasan: 'Aku pakai aplikasi Todoist buat ngatur jadwal, lumayan membantu banget! Mungkin bisa dicoba.',
+        isi_balasan: 'Aku juga pakai aplikasi Todoist untuk mengatur jadwal. Sangat membantu untuk memprioritaskan tugas!',
         is_anonim: false,
         created_at: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 + 7200000), // 2 hours after post
         updated_at: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000 + 7200000)
       },
 
-      // Reply to third discussion (Persiapan Ujian Nasional)
+      // Reply to third discussion (Prestasi Akademik)
       {
         id_diskusi: discussions[2].id_diskusi,
         id_user: users.find(u => u.role === 'siswa' && u.name === 'Rizky Pratama')?.id || users[4].id,
-        isi_balasan: 'Saya kesulitan memahami materi matematika, terutama aljabar. Ada rekomendasi cara belajar yang efektif?',
+        isi_balasan: 'Saya ingin tahu lebih banyak tentang prestasi akademik yang bisa diraih. Ada saran untuk memotivasi diri?',
         is_anonim: false,
         created_at: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000 + 3600000), // 1 hour after post
         updated_at: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000 + 3600000)
