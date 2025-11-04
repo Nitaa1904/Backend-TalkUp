@@ -58,7 +58,7 @@ const getKonselingByGuruBk = async (req, res, next) => {
     }
 
     const konselingRequests = await Konseling.findAll({
-      where: { id_guru_bk },
+      where: { id_guru_bk, status: "Menunggu" },
       include: [
         {
           model: siswa,
@@ -73,6 +73,15 @@ const getKonselingByGuruBk = async (req, res, next) => {
       ],
       order: [["tgl_pengajuan", "DESC"]],
     });
+
+    if (konselingRequests.length === 0) {
+      return res.status(200).json({
+        status: "Success",
+        message: "Belum ada pengajuan konseling yang menunggu persetujuan.",
+        isSuccess: true,
+        data: [],
+      });
+    }
 
     res.status(200).json({
       status: "Success",
