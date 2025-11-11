@@ -123,4 +123,49 @@ router.put(
   konselingController.updateStatusKonseling
 );
 
+router.get(
+  "/jadwal",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Daftar Jadwal Konseling Mendatang (Guru BK)'
+  #swagger.description = `
+    Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling
+    yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).
+    Data ini digunakan pada halaman "Jadwal Konseling" di frontend Guru BK.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.responses[200] = {
+      description: 'Daftar jadwal konseling mendatang berhasil diambil.',
+      schema: {
+        status: "Success",
+        message: "Daftar jadwal konseling mendatang berhasil diambil",
+        data: [
+          {
+            id: 12,
+            topik_konseling: "Kedisiplinan",
+            status: "Disetujui",
+            id_siswa: 5,
+            siswa: {
+              nama_lengkap: "Rafi Pratama",
+              kelas: "XI RPL 2"
+            },
+            detail_konseling: {
+              tgl_konseling: "2025-11-12",
+              jam_sesi: "09:00",
+              jenis_sesi_final: "Offline",
+              link_atau_ruang: "Ruang BK Lt.2"
+            }
+          }
+        ]
+      }
+  }
+  #swagger.responses[404] = {
+      description: 'Tidak ada jadwal konseling mendatang yang ditemukan.'
+  }
+  */
+  konselingController.getJadwalKonseling
+);
+
 module.exports = router;

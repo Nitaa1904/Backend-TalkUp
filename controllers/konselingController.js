@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { siswa, guru_bk, Konseling, DetailKonseling } = require("../models");
 const notificationService = require("../services/notificationService");
 
@@ -199,8 +200,56 @@ const updateStatusKonseling = async (req, res, next) => {
   }
 };
 
+const getJadwalKonseling = async (req, res, next) => {
+  try {
+    const jadwal = await Konseling.findAll({
+      where: { status: "Disetujui" },
+      include: [
+        {
+          model: DetailKonseling,
+          as: "detail_konseling",
+          where: {
+            tgl_sesi: { [Op.gt]: new Date() }, // ✅ pakai nama field yang benar
+          },
+          attributes: [
+            "tgl_sesi",
+            "jam_sesi",
+            "link_atau_ruang",
+            "balasan_untuk_siswa",
+            "catatan_guru_bk",
+          ],
+        },
+        {
+          model: siswa,
+          as: "siswa",
+          attributes: ["nama_lengkap", "kelas"],
+        },
+      ],
+      order: [
+        [{ model: DetailKonseling, as: "detail_konseling" }, "tgl_sesi", "ASC"],
+      ],
+    });
+
+    if (!jadwal.length) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Tidak ada jadwal konseling mendatang yang ditemukan",
+      });
+    }
+
+    res.status(200).json({
+      status: "Success",
+      message: "Daftar jadwal konseling mendatang berhasil diambil",
+      data: jadwal,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createKonseling,
   getKonselingByGuruBk,
   updateStatusKonseling,
+  getJadwalKonseling,
 };
