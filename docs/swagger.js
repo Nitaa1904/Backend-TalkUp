@@ -30,6 +30,10 @@ const doc = {
       description: "Endpoint untuk autentikasi pengguna (login).",
     },
     {
+      name: "Dashboard",
+      description: "Fitur dashboard untuk menampilkan data statistik."
+    },
+    {
       name: "Diskusi",
       description: "Fitur forum diskusi",
     },

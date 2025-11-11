@@ -7,6 +7,7 @@ const publicController = require("./publicController");
 const siswaController = require("./siswaController");
 const diskusiController = require("./diskusiController");
 const diskusiBalasanController = require("./diskusiBalasanController");
+const dashboardController = require("./dashboardController");
 
 module.exports = {
   exampleController,
@@ -18,4 +19,5 @@ module.exports = {
   siswaController,
   diskusiController,
   diskusiBalasanController,
+  dashboardController,
 };

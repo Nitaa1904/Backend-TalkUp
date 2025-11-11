@@ -9,6 +9,7 @@ const konselingRouter = require("./konselingRouter");
 const siswaRouter = require("./siswaRouter");
 const diskusiRouter = require("./diskusiRouter");
 const diskusiBalasanRouter = require("./diskusiBalasanRouter");
+const dashboardRouter = require("./dashboardRouter");
 
 router.use("/example", Example);
 router.use("/admin", adminRouter);
@@ -19,5 +20,6 @@ router.use("/konseling", konselingRouter);
 router.use("/siswa", siswaRouter);
 router.use("/diskusi", diskusiRouter);
 router.use("/balasan", diskusiBalasanRouter);
+router.use("/dashboard", dashboardRouter);
 
 module.exports = router;

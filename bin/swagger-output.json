@@ -13,6 +13,10 @@
       "description": "Endpoint untuk autentikasi pengguna (login)."
     },
     {
+      "name": "Dashboard",
+      "description": "Fitur dashboard untuk menampilkan data statistik."
+    },
+    {
       "name": "Diskusi",
       "description": "Fitur forum diskusi"
     },
@@ -1427,6 +1431,31 @@
             "description": "Not Found"
           }
         }
+      }
+    },
+    "/dashboard/guru": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "summary": "Get Dashboard Guru BK",
+        "description": "Endpoint khusus Dashboard Guru BK yang menampilkan ringkasan cepat dari dua kategori data utama: jadwal konseling mendatang dan pengajuan menunggu.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
