@@ -52,15 +52,17 @@ router.post(
 router.get(
   "/",
   verifyToken,
-  verifyRole(["guru_bk", "siswa", "super_admin"]),  
+  verifyRole(["guru_bk", "siswa", "super_admin"]),
   getAllDiskusi
   /*
     #swagger.tags = ['Diskusi']
-    #swagger.summary = 'List semua diskusi'
-    #swagger.description = 'Endpoint untuk mendapatkan daftar semua diskusi.'
+    #swagger.summary = 'List semua diskusi dengan filter dan pencarian'
+    #swagger.description = 'Endpoint untuk mendapatkan daftar semua diskusi dengan dukungan filter dan pencarian.'
     #swagger.security = [{ "bearerAuth": [] }]
     #swagger.parameters['page'] = { in: 'query', required: false, type: 'number', default: 1, description: 'Nomor halaman yang ingin ditampilkan. Default: 1' }
     #swagger.parameters['limit'] = { in: 'query', required: false, type: 'number', default: 25, description: 'Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25' }
+    #swagger.parameters['search'] = { in: 'query', required: false, type: 'string', description: 'Kata kunci untuk mencari diskusi berdasarkan judul atau konten' }
+    #swagger.parameters['filter'] = { in: 'query', required: false, type: 'string', enum: ['semua', 'terpopuler', 'terbaru'], default: 'semua', description: 'Filter untuk mengurutkan diskusi: semua (default), terpopuler (berdasarkan jumlah balasan), terbaru (berdasarkan tanggal pembuatan)' }
   */
 );
 
