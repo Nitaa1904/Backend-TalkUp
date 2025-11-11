@@ -1001,8 +1001,8 @@
         "tags": [
           "Diskusi"
         ],
-        "summary": "List semua diskusi",
-        "description": "Endpoint untuk mendapatkan daftar semua diskusi.",
+        "summary": "List semua diskusi dengan filter dan pencarian",
+        "description": "Endpoint untuk mendapatkan daftar semua diskusi dengan dukungan filter dan pencarian.",
         "parameters": [
           {
             "name": "page",
@@ -1019,6 +1019,26 @@
             "type": "number",
             "default": 25,
             "description": "Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Kata kunci untuk mencari diskusi berdasarkan judul atau konten"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "semua",
+              "terpopuler",
+              "terbaru"
+            ],
+            "default": "semua",
+            "description": "Filter untuk mengurutkan diskusi: semua (default), terpopuler (berdasarkan jumlah balasan), terbaru (berdasarkan tanggal pembuatan)"
           }
         ],
         "responses": {
