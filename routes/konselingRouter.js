@@ -45,19 +45,78 @@ router.post(
 );
 
 router.get(
+  "/",
+  verifyToken,
+  verifyRole("siswa"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Tampilkan riwayat konseling siswa'
+  #swagger.description = 'Endpoint untuk siswa melihat riwayat pengajuan konseling miliknya sendiri.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['page'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      description: 'Nomor halaman (default: 1)'
+  }
+  #swagger.parameters['limit'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      description: 'Jumlah data per halaman (default: 5)'
+  }
+  */
+  konselingController.getRiwayatKonseling
+);
+
+router.get(
   "/guru/:id_guru_bk",
   verifyToken,
   verifyRole("guru_bk"),
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Tampilkan daftar pengajuan konseling untuk Guru BK'
-  #swagger.description = 'Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.'
+  #swagger.summary = 'Daftar Pengajuan Konseling Siswa'
+  #swagger.description = `
+    Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling 
+    dari siswa bimbingannya yang masih berstatus "Menunggu".
+    Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.
+  `
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id_guru_bk'] = {
       in: 'path',
       required: true,
       type: 'integer',
-      description: 'ID Guru BK'
+      description: 'ID Guru BK yang ingin melihat daftar pengajuan konseling'
+  }
+  #swagger.responses[200] = {
+      description: 'Berhasil menampilkan daftar pengajuan konseling siswa dengan status "Menunggu".',
+      schema: {
+        success: true,
+        message: "Daftar pengajuan konseling ditemukan",
+        data: [
+          {
+            id: 1,
+            id_siswa: 5,
+            nama_siswa: "Nita Fitrotul Mar’ah",
+            kelas: "XII RPL 2",
+            tanggal_pengajuan: "2025-11-10T08:30:00.000Z",
+            deskripsi_masalah: "Merasa stres menjelang ujian akhir.",
+            status: "Menunggu"
+          },
+          {
+            id: 2,
+            id_siswa: 6,
+            nama_siswa: "Wahyu Ramadhan",
+            kelas: "XI TKJ 1",
+            tanggal_pengajuan: "2025-11-09T14:00:00.000Z",
+            deskripsi_masalah: "Kesulitan beradaptasi di lingkungan sekolah.",
+            status: "Menunggu"
+          }
+        ]
+      }
+  }
+  #swagger.responses[404] = {
+      description: 'Tidak ada pengajuan konseling yang ditemukan untuk Guru BK ini.'
   }
   */
   konselingController.getKonselingByGuruBk
@@ -121,6 +180,64 @@ router.put(
   }
   */
   konselingController.updateStatusKonseling
+);
+
+router.get(
+  "/:id_konseling",
+  verifyToken,
+  verifyRole(["siswa", "guru_bk"]),
+  validationMiddleware,
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Detail Pengajuan Konseling'
+  #swagger.description = 'Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id_konseling'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Konseling'
+  }
+  #swagger.responses[200] = {
+      description: 'Berhasil menampilkan detail pengajuan konseling',
+      schema: {
+        status: "Success",
+        message: "Detail pengajuan berhasil diambil",
+        data: {
+          id_konseling: 10,
+          status: "Disetujui",
+          tgl_pengajuan: "2025-10-15T07:00:00.000Z",
+          topik_konseling: "Karir",
+          jenis_sesi_pengajuan: "Online",
+          deskripsi_masalah: "Lorem ipsum dolor sit amet...",
+          siswa: {
+            nama: "Nadia Putri Rahmaniar",
+            kelas: "XI TKJ 4"
+          },
+          guru_bk: {
+            nama: "Guru BK SMK Telkom"
+          },
+          detail_konseling: {
+            tgl_konseling: "2025-10-20T09:00:00.000Z",
+            waktu_mulai: "10:00",
+            waktu_selesai: "11:00",
+            jenis_sesi_final: "Online",
+            link_sesi: "https://meet.google.com/xyz",
+            deskripsi_jadwal: "Silakan hadir tepat waktu.",
+            hasil_konseling: null,
+            catatan_guru_bk: null
+          }
+        }
+      }
+  }
+  #swagger.responses[403] = {
+      description: 'Akses ditolak'
+  }
+  #swagger.responses[404] = {
+      description: 'Data konseling tidak ditemukan'
+  }
+  */
+  konselingController.getDetailKonseling
 );
 
 router.get(

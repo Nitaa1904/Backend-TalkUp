@@ -1,4 +1,5 @@
 const { diskusi: DiskusiModel, users: UsersModel } = require('../models');
+const { Op } = require('sequelize');
 
 const createDiskusi = async (req, res, next) => {
   try {
@@ -53,15 +54,88 @@ const getAllDiskusi = async (req, res, next) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);  // Pastikan page minimal 1
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 25));  // Batasi max 50 item per halaman
     const offset = (page - 1) * limit;
+    
+    // Get search and filter parameters
+    const search = req.query.search || '';
+    const filter = req.query.filter || 'semua';
+    
+    // Build where clause for search - flexible text search in judul or konten
+    let whereClause = {};
+    if (search) {
+      // Clean and normalize search term
+      const cleanSearch = search.trim();
+      
+      // Split search into words for more flexible matching
+      const searchWords = cleanSearch.split(/\s+/).filter(word => word.length > 0);
+      
+      if (searchWords.length > 0) {
+        // Build OR conditions for each word in both judul and konten
+        // For single word search, we need a simple OR condition
+        if (searchWords.length === 1) {
+          const word = searchWords[0];
+          whereClause = {
+            [Op.or]: [
+              { judul: { [Op.iLike]: `%${word}%` } },
+              { konten: { [Op.iLike]: `%${word}%` } }
+            ]
+          };
+        } else {
+          // For multiple words, create OR conditions for each word in each field
+          const titleConditions = searchWords.map(word => ({
+            judul: { [Op.iLike]: `%${word}%` }
+          }));
+          const contentConditions = searchWords.map(word => ({
+            konten: { [Op.iLike]: `%${word}%` }
+          }));
+          
+          whereClause = {
+            [Op.or]: [...titleConditions, ...contentConditions]
+          };
+        }
+        
+        // Debug log
+        console.log('Search parameter:', cleanSearch);
+        console.log('Search words:', searchWords);
+        console.log('Where clause:', JSON.stringify(whereClause, null, 2));
+      }
+    }
+    
+    // Build order clause based on filter
+    let orderClause = [['id_diskusi', 'ASC']]; // Default order
+    
+    if (filter === 'terpopuler') {
+      orderClause = [['jumlah_balasan', 'DESC'], ['id_diskusi', 'ASC']];
+    } else if (filter === 'terbaru') {
+      orderClause = [['tgl_post', 'DESC'], ['id_diskusi', 'ASC']];
+    }
 
-    // Get total count of all records and calculate total pages
-    const totalData = await DiskusiModel.count();
+    // Get total count of records with filters and calculate total pages
+    const totalData = await DiskusiModel.count({ where: whereClause });
     const totalPages = Math.max(1, Math.ceil(totalData / limit));  // Minimal 1 halaman
 
+    // Debug log
+    if (search) {
+      console.log('Total data found:', totalData);
+      
+      // Also test with a direct query to see what's in the database
+      const allRecords = await DiskusiModel.findAll({
+        attributes: ['id_diskusi', 'judul', 'konten'],
+        raw: true
+      });
+      
+      console.log('All records in database:');
+      allRecords.forEach(record => {
+        console.log(`ID: ${record.id_diskusi}, Judul: "${record.judul}", Konten: "${record.konten.substring(0, 50)}..."`);
+        console.log(`  Contains "saya" in judul: ${record.judul.toLowerCase().includes('saya')}`);
+        console.log(`  Contains "saya" in konten: ${record.konten.toLowerCase().includes('saya')}`);
+      });
+    }
+
     const { count, rows: list } = await DiskusiModel.findAndCountAll({
+      where: whereClause,
       offset,
       limit,
-      order: [['id_diskusi', 'ASC']],
+      order: orderClause,
       include: [
         {
           model: UsersModel,

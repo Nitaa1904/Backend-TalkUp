@@ -13,6 +13,10 @@
       "description": "Endpoint untuk autentikasi pengguna (login)."
     },
     {
+      "name": "Dashboard",
+      "description": "Fitur dashboard untuk menampilkan data statistik."
+    },
+    {
       "name": "Diskusi",
       "description": "Fitur forum diskusi"
     },
@@ -41,9 +45,7 @@
       "description": "Manajemen data Guru BK & Siswa oleh Super Admin."
     }
   ],
-  "schemes": [
-    "http"
-  ],
+  "schemes": ["http"],
   "securityDefinitions": {
     "bearerAuth": {
       "type": "apiKey",
@@ -129,9 +131,7 @@
     },
     "/admin/add-guru-bk": {
       "post": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Tambah data guru BK",
         "description": "Endpoint untuk menambah data Guru BK (hanya Super Admin).",
         "parameters": [
@@ -187,9 +187,7 @@
     },
     "/admin/guru-bk": {
       "get": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Lihat semua data guru BK",
         "description": "",
         "responses": {
@@ -212,9 +210,7 @@
     },
     "/admin/guru-bk/{id}": {
       "get": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Lihat data guru BK berdasarkan ID",
         "description": "",
         "parameters": [
@@ -247,9 +243,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Perbarui data guru BK",
         "description": "",
         "parameters": [
@@ -307,9 +301,7 @@
         "requestBody": {}
       },
       "delete": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Hapus data guru BK",
         "description": "",
         "parameters": [
@@ -344,9 +336,7 @@
     },
     "/admin/add-siswa": {
       "post": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Tambah data siswa",
         "description": "Endpoint untuk menambahkan data siswa (hanya Super Admin).",
         "parameters": [
@@ -409,9 +399,7 @@
     },
     "/admin/siswa": {
       "get": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Lihat semua data siswa",
         "description": "",
         "responses": {
@@ -434,9 +422,7 @@
     },
     "/admin/siswa/{id}": {
       "get": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Lihat data siswa berdasarkan ID",
         "description": "",
         "parameters": [
@@ -466,9 +452,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Perbarui data siswa",
         "description": "",
         "parameters": [
@@ -536,9 +520,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Hapus data siswa",
         "description": "",
         "parameters": [
@@ -570,9 +552,7 @@
     },
     "/admin/users": {
       "get": {
-        "tags": [
-          "Super Admin"
-        ],
+        "tags": ["Super Admin"],
         "summary": "Lihat semua pengguna (Super Admin)",
         "description": "Endpoint untuk melihat semua user yang terdaftar di sistem.",
         "responses": {
@@ -595,9 +575,7 @@
     },
     "/guru-bk/siswa": {
       "get": {
-        "tags": [
-          "Guru BK"
-        ],
+        "tags": ["Guru BK"],
         "summary": "Ambil semua siswa bimbingan",
         "description": "Endpoint untuk menampilkan seluruh siswa yang berada di bawah bimbingan Guru BK terkait.",
         "responses": {
@@ -620,9 +598,7 @@
     },
     "/guru-bk/siswa/{id}": {
       "get": {
-        "tags": [
-          "Guru BK"
-        ],
+        "tags": ["Guru BK"],
         "summary": "Ambil data siswa bimbingan berdasarkan ID",
         "description": "Endpoint untuk menampilkan data detail siswa bimbingan berdasarkan ID siswa.",
         "parameters": [
@@ -654,9 +630,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login pengguna",
         "description": "Login untuk Super Admin, Guru BK, dan Siswa.",
         "parameters": [
@@ -688,9 +662,7 @@
     },
     "/public/guru-bk": {
       "get": {
-        "tags": [
-          "Public"
-        ],
+        "tags": ["Public"],
         "summary": "Ambil semua data Guru BK (publik)",
         "description": "Endpoint publik tanpa autentikasi.",
         "responses": {
@@ -702,9 +674,7 @@
     },
     "/konseling/": {
       "post": {
-        "tags": [
-          "Konseling"
-        ],
+        "tags": ["Konseling"],
         "summary": "Siswa Buat permintaan konseling",
         "description": "Endpoint untuk siswa membuat permintaan konseling.",
         "parameters": [
@@ -754,22 +724,25 @@
             "bearerAuth": []
           }
         ]
-      }
-    },
-    "/konseling/guru/{id_guru_bk}": {
+      },
       "get": {
-        "tags": [
-          "Konseling"
-        ],
-        "summary": "Tampilkan daftar pengajuan konseling untuk Guru BK",
-        "description": "Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.",
+        "tags": ["Konseling"],
+        "summary": "Tampilkan riwayat konseling siswa",
+        "description": "Endpoint untuk siswa melihat riwayat pengajuan konseling miliknya sendiri.",
         "parameters": [
           {
-            "name": "id_guru_bk",
-            "in": "path",
-            "required": true,
+            "name": "page",
+            "in": "query",
+            "required": false,
             "type": "integer",
-            "description": "ID Guru BK"
+            "description": "Nomor halaman (default: 1)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "description": "Jumlah data per halaman (default: 5)"
           }
         ],
         "responses": {
@@ -790,11 +763,96 @@
         ]
       }
     },
+    "/konseling/guru/{id_guru_bk}": {
+      "get": {
+        "tags": ["Konseling"],
+        "summary": "Daftar Pengajuan Konseling Siswa",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling \r  dari siswa bimbingannya yang masih berstatus \"Menunggu\".\r  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.\r  ",
+        "parameters": [
+          {
+            "name": "id_guru_bk",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID Guru BK yang ingin melihat daftar pengajuan konseling"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan daftar pengajuan konseling siswa dengan status \"Menunggu\".",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Daftar pengajuan konseling ditemukan"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "id_siswa": {
+                        "type": "number",
+                        "example": 6
+                      },
+                      "nama_siswa": {
+                        "type": "string",
+                        "example": "Wahyu Ramadhan"
+                      },
+                      "kelas": {
+                        "type": "string",
+                        "example": "XI TKJ 1"
+                      },
+                      "tanggal_pengajuan": {
+                        "type": "string",
+                        "example": "2025-11-09T14:00:00.000Z"
+                      },
+                      "deskripsi_masalah": {
+                        "type": "string",
+                        "example": "Kesulitan beradaptasi di lingkungan sekolah."
+                      },
+                      "status": {
+                        "type": "string",
+                        "example": "Menunggu"
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Tidak ada pengajuan konseling yang ditemukan untuk Guru BK ini."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/konseling/{id}": {
       "put": {
-        "tags": [
-          "Konseling"
-        ],
+        "tags": ["Konseling"],
         "summary": "Update status konseling oleh Guru BK",
         "description": "Endpoint untuk Guru BK mengubah persetujuan pengajuan konseling. Jika disetujui, akan otomatis membuat entry di tabel detail_konseling.",
         "parameters": [
@@ -865,11 +923,145 @@
         ]
       }
     },
+    "/konseling/{id_konseling}": {
+      "get": {
+        "tags": ["Konseling"],
+        "summary": "Detail Pengajuan Konseling",
+        "description": "Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.",
+        "parameters": [
+          {
+            "name": "id_konseling",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID Konseling"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan detail pengajuan konseling",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Detail pengajuan berhasil diambil"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id_konseling": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Disetujui"
+                    },
+                    "tgl_pengajuan": {
+                      "type": "string",
+                      "example": "2025-10-15T07:00:00.000Z"
+                    },
+                    "topik_konseling": {
+                      "type": "string",
+                      "example": "Karir"
+                    },
+                    "jenis_sesi_pengajuan": {
+                      "type": "string",
+                      "example": "Online"
+                    },
+                    "deskripsi_masalah": {
+                      "type": "string",
+                      "example": "Lorem ipsum dolor sit amet..."
+                    },
+                    "siswa": {
+                      "type": "object",
+                      "properties": {
+                        "nama": {
+                          "type": "string",
+                          "example": "Nadia Putri Rahmaniar"
+                        },
+                        "kelas": {
+                          "type": "string",
+                          "example": "XI TKJ 4"
+                        }
+                      }
+                    },
+                    "guru_bk": {
+                      "type": "object",
+                      "properties": {
+                        "nama": {
+                          "type": "string",
+                          "example": "Guru BK SMK Telkom"
+                        }
+                      }
+                    },
+                    "detail_konseling": {
+                      "type": "object",
+                      "properties": {
+                        "tgl_konseling": {
+                          "type": "string",
+                          "example": "2025-10-20T09:00:00.000Z"
+                        },
+                        "waktu_mulai": {
+                          "type": "string",
+                          "example": "10:00"
+                        },
+                        "waktu_selesai": {
+                          "type": "string",
+                          "example": "11:00"
+                        },
+                        "jenis_sesi_final": {
+                          "type": "string",
+                          "example": "Online"
+                        },
+                        "link_sesi": {
+                          "type": "string",
+                          "example": "https://meet.google.com/xyz"
+                        },
+                        "deskripsi_jadwal": {
+                          "type": "string",
+                          "example": "Silakan hadir tepat waktu."
+                        },
+                        "hasil_konseling": {},
+                        "catatan_guru_bk": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Akses ditolak"
+          },
+          "404": {
+            "description": "Data konseling tidak ditemukan"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/konseling/jadwal": {
       "get": {
-        "tags": [
-          "Konseling"
-        ],
+        "tags": ["Konseling"],
         "summary": "Daftar Jadwal Konseling Mendatang (Guru BK)",
         "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.  ",
         "responses": {
@@ -969,9 +1161,7 @@
     },
     "/siswa/me": {
       "get": {
-        "tags": [
-          "Siswa"
-        ],
+        "tags": ["Siswa"],
         "summary": "Lihat profil saya",
         "description": "Endpoint untuk mengambil data profil siswa yang sedang login.",
         "responses": {
@@ -995,9 +1185,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "Siswa"
-        ],
+        "tags": ["Siswa"],
         "summary": "Perbarui profil saya",
         "description": "Endpoint untuk memperbarui data profil siswa yang sedang login.",
         "parameters": [
@@ -1049,9 +1237,7 @@
     },
     "/diskusi/": {
       "post": {
-        "tags": [
-          "Diskusi"
-        ],
+        "tags": ["Diskusi"],
         "summary": "Membuat diskusi baru",
         "description": "Endpoint untuk membuat diskusi baru (hanya Guru BK dan Siswa).",
         "parameters": [
@@ -1100,11 +1286,9 @@
         ]
       },
       "get": {
-        "tags": [
-          "Diskusi"
-        ],
-        "summary": "List semua diskusi",
-        "description": "Endpoint untuk mendapatkan daftar semua diskusi.",
+        "tags": ["Diskusi"],
+        "summary": "List semua diskusi dengan filter dan pencarian",
+        "description": "Endpoint untuk mendapatkan daftar semua diskusi dengan dukungan filter dan pencarian.",
         "parameters": [
           {
             "name": "page",
@@ -1121,6 +1305,22 @@
             "type": "number",
             "default": 25,
             "description": "Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "description": "Kata kunci untuk mencari diskusi berdasarkan judul atau konten"
+          },
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": ["semua", "terpopuler", "terbaru"],
+            "default": "semua",
+            "description": "Filter untuk mengurutkan diskusi: semua (default), terpopuler (berdasarkan jumlah balasan), terbaru (berdasarkan tanggal pembuatan)"
           }
         ],
         "responses": {
@@ -1143,9 +1343,7 @@
     },
     "/diskusi/{id}": {
       "get": {
-        "tags": [
-          "Diskusi"
-        ],
+        "tags": ["Diskusi"],
         "summary": "Detail diskusi by id",
         "description": "Endpoint untuk mendapatkan detail diskusi berdasarkan ID.",
         "parameters": [
@@ -1179,9 +1377,7 @@
     },
     "/balasan/": {
       "post": {
-        "tags": [
-          "Diskusi Balasan"
-        ],
+        "tags": ["Diskusi Balasan"],
         "summary": "Menambahkan balasan ke diskusi",
         "description": "Endpoint untuk menambahkan balasan ke dalam diskusi (hanya Guru BK dan Siswa).",
         "parameters": [
@@ -1235,9 +1431,7 @@
     },
     "/balasan/{diskusiId}": {
       "get": {
-        "tags": [
-          "Diskusi Balasan"
-        ],
+        "tags": ["Diskusi Balasan"],
         "summary": "Mendapatkan daftar balasan diskusi",
         "description": "Endpoint untuk mendapatkan daftar balasan dari sebuah diskusi.",
         "parameters": [
@@ -1277,6 +1471,29 @@
             "description": "Not Found"
           }
         }
+      }
+    },
+    "/dashboard/guru": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Get Dashboard Guru BK",
+        "description": "Endpoint khusus Dashboard Guru BK yang menampilkan ringkasan cepat dari dua kategori data utama: jadwal konseling mendatang dan pengajuan menunggu.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
