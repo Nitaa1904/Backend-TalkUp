@@ -800,26 +800,81 @@
         "tags": [
           "Konseling"
         ],
-        "summary": "Tampilkan daftar pengajuan konseling untuk Guru BK",
-        "description": "Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.",
+        "summary": "Daftar Pengajuan Konseling Siswa",
+        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling   dari siswa bimbingannya yang masih berstatus \"Menunggu\".  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.  ",
         "parameters": [
           {
             "name": "id_guru_bk",
             "in": "path",
             "required": true,
             "type": "integer",
-            "description": "ID Guru BK"
+            "description": "ID Guru BK yang ingin melihat daftar pengajuan konseling"
           }
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Berhasil menampilkan daftar pengajuan konseling siswa dengan status \"Menunggu\".",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "success": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Daftar pengajuan konseling ditemukan"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "number",
+                        "example": 2
+                      },
+                      "id_siswa": {
+                        "type": "number",
+                        "example": 6
+                      },
+                      "nama_siswa": {
+                        "type": "string",
+                        "example": "Wahyu Ramadhan"
+                      },
+                      "kelas": {
+                        "type": "string",
+                        "example": "XI TKJ 1"
+                      },
+                      "tanggal_pengajuan": {
+                        "type": "string",
+                        "example": "2025-11-09T14:00:00.000Z"
+                      },
+                      "deskripsi_masalah": {
+                        "type": "string",
+                        "example": "Kesulitan beradaptasi di lingkungan sekolah."
+                      },
+                      "status": {
+                        "type": "string",
+                        "example": "Menunggu"
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
+          },
+          "404": {
+            "description": "Tidak ada pengajuan konseling yang ditemukan untuk Guru BK ini."
           }
         },
         "security": [

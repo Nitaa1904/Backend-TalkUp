@@ -75,14 +75,48 @@ router.get(
   verifyRole("guru_bk"),
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Tampilkan daftar pengajuan konseling untuk Guru BK'
-  #swagger.description = 'Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.'
+  #swagger.summary = 'Daftar Pengajuan Konseling Siswa'
+  #swagger.description = `
+    Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling 
+    dari siswa bimbingannya yang masih berstatus "Menunggu".
+    Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.
+  `
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id_guru_bk'] = {
       in: 'path',
       required: true,
       type: 'integer',
-      description: 'ID Guru BK'
+      description: 'ID Guru BK yang ingin melihat daftar pengajuan konseling'
+  }
+  #swagger.responses[200] = {
+      description: 'Berhasil menampilkan daftar pengajuan konseling siswa dengan status "Menunggu".',
+      schema: {
+        success: true,
+        message: "Daftar pengajuan konseling ditemukan",
+        data: [
+          {
+            id: 1,
+            id_siswa: 5,
+            nama_siswa: "Nita Fitrotul Mar’ah",
+            kelas: "XII RPL 2",
+            tanggal_pengajuan: "2025-11-10T08:30:00.000Z",
+            deskripsi_masalah: "Merasa stres menjelang ujian akhir.",
+            status: "Menunggu"
+          },
+          {
+            id: 2,
+            id_siswa: 6,
+            nama_siswa: "Wahyu Ramadhan",
+            kelas: "XI TKJ 1",
+            tanggal_pengajuan: "2025-11-09T14:00:00.000Z",
+            deskripsi_masalah: "Kesulitan beradaptasi di lingkungan sekolah.",
+            status: "Menunggu"
+          }
+        ]
+      }
+  }
+  #swagger.responses[404] = {
+      description: 'Tidak ada pengajuan konseling yang ditemukan untuk Guru BK ini.'
   }
   */
   konselingController.getKonselingByGuruBk
