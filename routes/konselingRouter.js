@@ -182,4 +182,62 @@ router.put(
   konselingController.updateStatusKonseling
 );
 
+router.get(
+  "/:id_konseling",
+  verifyToken,
+  verifyRole(["siswa", "guru_bk"]),
+  validationMiddleware,
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Detail Pengajuan Konseling'
+  #swagger.description = 'Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id_konseling'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Konseling'
+  }
+  #swagger.responses[200] = {
+      description: 'Berhasil menampilkan detail pengajuan konseling',
+      schema: {
+        status: "Success",
+        message: "Detail pengajuan berhasil diambil",
+        data: {
+          id_konseling: 10,
+          status: "Disetujui",
+          tgl_pengajuan: "2025-10-15T07:00:00.000Z",
+          topik_konseling: "Karir",
+          jenis_sesi_pengajuan: "Online",
+          deskripsi_masalah: "Lorem ipsum dolor sit amet...",
+          siswa: {
+            nama: "Nadia Putri Rahmaniar",
+            kelas: "XI TKJ 4"
+          },
+          guru_bk: {
+            nama: "Guru BK SMK Telkom"
+          },
+          detail_konseling: {
+            tgl_konseling: "2025-10-20T09:00:00.000Z",
+            waktu_mulai: "10:00",
+            waktu_selesai: "11:00",
+            jenis_sesi_final: "Online",
+            link_sesi: "https://meet.google.com/xyz",
+            deskripsi_jadwal: "Silakan hadir tepat waktu.",
+            hasil_konseling: null,
+            catatan_guru_bk: null
+          }
+        }
+      }
+  }
+  #swagger.responses[403] = {
+      description: 'Akses ditolak'
+  }
+  #swagger.responses[404] = {
+      description: 'Data konseling tidak ditemukan'
+  }
+  */
+  konselingController.getDetailKonseling
+);
+
 module.exports = router;

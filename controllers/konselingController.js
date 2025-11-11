@@ -264,9 +264,116 @@ const getRiwayatKonseling = async (req, res, next) => {
   }
 };
 
+const getDetailKonseling = async (req, res, next) => {
+  try {
+    const { id_konseling } = req.params;
+    
+    const konseling = await Konseling.findOne({
+      where: { id: id_konseling },
+      include: [
+        {
+          model: siswa,
+          as: "siswa",
+          attributes: ["id", "nama_lengkap", "kelas"],
+        },
+        {
+          model: guru_bk,
+          as: "guru_bk",
+          attributes: ["id", "nama"],
+        },
+        {
+          model: DetailKonseling,
+          as: "detail_konseling",
+          required: false,
+        },
+      ],
+    });
+
+    if (!konseling) {
+      return res.status(404).json({
+        status: "Error",
+        message: "Data konseling tidak ditemukan",
+      });
+    }
+
+    // Access validation
+    if (req.user.role === "siswa" && req.user.id_ref !== konseling.id_siswa) {
+      return res.status(403).json({
+        status: "Error",
+        message: "Akses ditolak. Anda hanya dapat melihat pengajuan konseling milik Anda sendiri.",
+      });
+    }
+
+    if (req.user.role === "guru_bk" && req.user.id_ref !== konseling.id_guru_bk) {
+      return res.status(403).json({
+        status: "Error",
+        message: "Akses ditolak. Anda hanya dapat melihat pengajuan dari siswa bimbingan Anda.",
+      });
+    }
+
+    // Format response data
+    const responseData = {
+      id_konseling: konseling.id,
+      status: konseling.status,
+      tgl_pengajuan: konseling.tgl_pengajuan,
+      topik_konseling: konseling.topik_konseling,
+      jenis_sesi_pengajuan: konseling.jenis_sesi,
+      deskripsi_masalah: konseling.deskripsi_masalah,
+      siswa: {
+        nama: konseling.siswa?.nama_lengkap,
+        kelas: konseling.siswa?.kelas,
+      },
+      guru_bk: {
+        nama: konseling.guru_bk?.nama,
+      },
+    };
+
+    // Add detail_konseling if status is "Disetujui" or "Selesai"
+    if (konseling.status === "Disetujui" || konseling.status === "Selesai") {
+      if (konseling.detail_konseling) {
+        const detail = konseling.detail_konseling;
+        
+        // Parse jam_sesi to get waktu_mulai and waktu_selesai
+        let waktu_mulai = null;
+        let waktu_selesai = null;
+        
+        if (detail.jam_sesi) {
+          const timeParts = detail.jam_sesi.split("-");
+          waktu_mulai = timeParts[0] ? timeParts[0].trim() : null;
+          waktu_selesai = timeParts[1] ? timeParts[1].trim() : null;
+        }
+        
+        responseData.detail_konseling = {
+          tgl_konseling: detail.tgl_sesi,
+          waktu_mulai,
+          waktu_selesai,
+          jenis_sesi_final: detail.link_atau_ruang?.includes("http") ? "Online" : "Tatap Muka",
+          link_sesi: detail.link_atau_ruang?.includes("http") ? detail.link_atau_ruang : null,
+          deskripsi_jadwal: detail.balasan_untuk_siswa,
+        };
+      }
+    }
+
+    // Add hasil_konseling and catatan_guru_bk if status is "Selesai"
+    if (konseling.status === "Selesai" && konseling.detail_konseling) {
+      responseData.detail_konseling.hasil_konseling = konseling.detail_konseling.hasil_konseling;
+      responseData.detail_konseling.catatan_guru_bk = konseling.detail_konseling.catatan_guru_bk;
+    }
+
+    res.status(200).json({
+      status: "Success",
+      message: "Detail pengajuan berhasil diambil",
+      data: responseData,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createKonseling,
   getKonselingByGuruBk,
   updateStatusKonseling,
   getRiwayatKonseling,
+  getDetailKonseling,
 };

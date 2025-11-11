@@ -801,7 +801,7 @@
           "Konseling"
         ],
         "summary": "Daftar Pengajuan Konseling Siswa",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling   dari siswa bimbingannya yang masih berstatus \"Menunggu\".  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling \r  dari siswa bimbingannya yang masih berstatus \"Menunggu\".\r  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.\r  ",
         "parameters": [
           {
             "name": "id_guru_bk",
@@ -950,6 +950,141 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/konseling/{id_konseling}": {
+      "get": {
+        "tags": [
+          "Konseling"
+        ],
+        "summary": "Detail Pengajuan Konseling",
+        "description": "Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.",
+        "parameters": [
+          {
+            "name": "id_konseling",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID Konseling"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil menampilkan detail pengajuan konseling",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Detail pengajuan berhasil diambil"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id_konseling": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Disetujui"
+                    },
+                    "tgl_pengajuan": {
+                      "type": "string",
+                      "example": "2025-10-15T07:00:00.000Z"
+                    },
+                    "topik_konseling": {
+                      "type": "string",
+                      "example": "Karir"
+                    },
+                    "jenis_sesi_pengajuan": {
+                      "type": "string",
+                      "example": "Online"
+                    },
+                    "deskripsi_masalah": {
+                      "type": "string",
+                      "example": "Lorem ipsum dolor sit amet..."
+                    },
+                    "siswa": {
+                      "type": "object",
+                      "properties": {
+                        "nama": {
+                          "type": "string",
+                          "example": "Nadia Putri Rahmaniar"
+                        },
+                        "kelas": {
+                          "type": "string",
+                          "example": "XI TKJ 4"
+                        }
+                      }
+                    },
+                    "guru_bk": {
+                      "type": "object",
+                      "properties": {
+                        "nama": {
+                          "type": "string",
+                          "example": "Guru BK SMK Telkom"
+                        }
+                      }
+                    },
+                    "detail_konseling": {
+                      "type": "object",
+                      "properties": {
+                        "tgl_konseling": {
+                          "type": "string",
+                          "example": "2025-10-20T09:00:00.000Z"
+                        },
+                        "waktu_mulai": {
+                          "type": "string",
+                          "example": "10:00"
+                        },
+                        "waktu_selesai": {
+                          "type": "string",
+                          "example": "11:00"
+                        },
+                        "jenis_sesi_final": {
+                          "type": "string",
+                          "example": "Online"
+                        },
+                        "link_sesi": {
+                          "type": "string",
+                          "example": "https://meet.google.com/xyz"
+                        },
+                        "deskripsi_jadwal": {
+                          "type": "string",
+                          "example": "Silakan hadir tepat waktu."
+                        },
+                        "hasil_konseling": {},
+                        "catatan_guru_bk": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Akses ditolak"
+          },
+          "404": {
+            "description": "Data konseling tidak ditemukan"
           }
         },
         "security": [
