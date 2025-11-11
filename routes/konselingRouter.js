@@ -45,6 +45,31 @@ router.post(
 );
 
 router.get(
+  "/",
+  verifyToken,
+  verifyRole("siswa"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Tampilkan riwayat konseling siswa'
+  #swagger.description = 'Endpoint untuk siswa melihat riwayat pengajuan konseling miliknya sendiri.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['page'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      description: 'Nomor halaman (default: 1)'
+  }
+  #swagger.parameters['limit'] = {
+      in: 'query',
+      required: false,
+      type: 'integer',
+      description: 'Jumlah data per halaman (default: 5)'
+  }
+  */
+  konselingController.getRiwayatKonseling
+);
+
+router.get(
   "/guru/:id_guru_bk",
   verifyToken,
   verifyRole("guru_bk"),

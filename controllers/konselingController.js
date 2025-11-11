@@ -199,8 +199,74 @@ const updateStatusKonseling = async (req, res, next) => {
   }
 };
 
+const getRiwayatKonseling = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page - 1) * limit;
+    const siswaId = req.user.id_ref;
+
+    const { count, rows: konselingData } = await Konseling.findAndCountAll({
+      where: { id_siswa: siswaId },
+      include: [
+        {
+          model: guru_bk,
+          as: "guru_bk",
+          attributes: ["id", "nama"],
+          include: [
+            {
+              model: siswa.sequelize.models.users,
+              as: "akun",
+              attributes: ["email"],
+              required: false,
+            },
+          ],
+        },
+      ],
+      attributes: ["id", "tgl_pengajuan", "topik_konseling", "deskripsi_masalah", "status"],
+      order: [["id", "DESC"]],
+      limit,
+      offset,
+      distinct: true,
+    });
+
+    const totalPages = Math.ceil(count / limit);
+
+    // Additional deduplication at application level
+    const uniqueKonselingData = konselingData.filter((konseling, index, self) =>
+      index === self.findIndex((k) => k.id === konseling.id)
+    );
+
+    const formattedData = uniqueKonselingData.map((konseling) => ({
+      id_konseling: konseling.id,
+      tanggal: konseling.tgl_pengajuan,
+      topik: konseling.topik_konseling,
+      deskripsi: konseling.deskripsi_masalah,
+      status: konseling.status,
+      guruBK: {
+        id_guru: konseling.guru_bk?.id,
+        nama: konseling.guru_bk?.nama,
+        email: konseling.guru_bk?.akun?.email,
+      },
+    }));
+
+    res.status(200).json({
+      status: "Success",
+      message: "Berhasil mengambil riwayat konseling",
+      data: formattedData,
+      page,
+      limit,
+      totalData: uniqueKonselingData.length,
+      totalPages,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createKonseling,
   getKonselingByGuruBk,
   updateStatusKonseling,
+  getRiwayatKonseling,
 };
