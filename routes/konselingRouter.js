@@ -45,25 +45,92 @@ router.post(
 );
 
 router.get(
-  "/",
+  "/riwayat",
   verifyToken,
-  verifyRole("siswa"),
+  verifyRole(["siswa", "guru_bk"]),
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Tampilkan riwayat konseling siswa'
-  #swagger.description = 'Endpoint untuk siswa melihat riwayat pengajuan konseling miliknya sendiri.'
+  #swagger.summary = 'Riwayat Konseling'
+  #swagger.description = `
+  Endpoint ini digunakan untuk menampilkan daftar seluruh pengajuan konseling
+  yang telah berstatus "Selesai". Data yang ditampilkan disesuaikan dengan peran pengguna:
+  - **Siswa**: hanya dapat melihat riwayat konseling miliknya sendiri.
+  - **Guru BK**: dapat melihat riwayat seluruh siswa bimbingannya.
+
+  Tersedia filter opsional berdasarkan bulan, tahun, dan topik konseling.
+  Hasil ditampilkan secara terurut dari yang terbaru (tgl_sesi paling akhir).
+  `
   #swagger.security = [{ "bearerAuth": [] }]
+
+  #swagger.parameters['month'] = {
+      in: 'query',
+      description: 'Filter berdasarkan bulan (opsional)',
+      required: false,
+      type: 'integer',
+      example: 11
+  }
+
+  #swagger.parameters['year'] = {
+      in: 'query',
+      description: 'Filter berdasarkan tahun (opsional)',
+      required: false,
+      type: 'integer',
+      example: 2025
+  }
+
+  #swagger.parameters['topik'] = {
+      in: 'query',
+      description: 'Filter berdasarkan topik konseling (opsional)',
+      required: false,
+      type: 'string',
+      example: 'Karir'
+  }
+
   #swagger.parameters['page'] = {
       in: 'query',
+      description: 'Nomor halaman data (pagination)',
       required: false,
       type: 'integer',
-      description: 'Nomor halaman (default: 1)'
+      example: 1
   }
+
   #swagger.parameters['limit'] = {
       in: 'query',
+      description: 'Jumlah data per halaman (pagination)',
       required: false,
       type: 'integer',
-      description: 'Jumlah data per halaman (default: 5)'
+      example: 10
+  }
+
+  #swagger.responses[200] = {
+      description: 'Berhasil menampilkan daftar riwayat konseling yang telah selesai',
+      schema: {
+          status: 'Success',
+          message: 'Riwayat konseling berhasil diambil',
+          isSuccess: true,
+          totalData: 2,
+          currentPage: 1,
+          totalPages: 1,
+          data: [
+              {
+                  id_konseling: 12,
+                  topik_konseling: 'Karir dan Rencana Studi Lanjut',
+                  jenis_sesi: 'Offline',
+                  status: 'Selesai',
+                  tgl_pengajuan: '2025-09-10T07:00:00.000Z',
+                  tgl_selesai: '2025-09-15T09:00:00.000Z',
+                  siswa: {
+                      nama_lengkap: 'Nadia Putri Rahmaniar',
+                      kelas: 'XI TKJ 4'
+                  },
+                  guru_bk: {
+                      nama: 'Bu Rina Yuliana'
+                  },
+                  hasil_konseling: 'Siswa telah memahami pilihan jurusan sesuai minat.',
+                  catatan_guru_bk: 'Perlu follow-up dalam 2 minggu.'
+              }
+          ]
+      }
   }
   */
   konselingController.getRiwayatKonseling

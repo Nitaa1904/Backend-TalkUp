@@ -202,70 +202,110 @@ const updateStatusKonseling = async (req, res, next) => {
 
 const getRiwayatKonseling = async (req, res, next) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
-    const offset = (page - 1) * limit;
-    const siswaId = req.user.id_ref;
+    const { role, id_ref } = req.user;
+    const { month, year, topik, page = 1, limit = 10 } = req.query;
 
-    const { count, rows: konselingData } = await Konseling.findAndCountAll({
-      where: { id_siswa: siswaId },
+    const whereCondition = { status: "Selesai" };
+
+    if (role === "siswa") {
+      whereCondition.id_siswa = id_ref;
+    } else if (role === "guru_bk") {
+      whereCondition.id_guru_bk = id_ref;
+    } else {
+      return res.status(403).json({
+        status: "Forbidden",
+        message: "Peran tidak diizinkan mengakses riwayat konseling.",
+      });
+    }
+
+    if (month && year) {
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0);
+      whereCondition["$detail_konseling.tgl_sesi$"] = {
+        [Op.between]: [startDate, endDate],
+      };
+    }
+
+    if (topik) {
+      whereCondition.topik_konseling = topik;
+    }
+
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const perPage = parseInt(limit);
+
+    const riwayat = await Konseling.findAndCountAll({
+      where: whereCondition,
       include: [
+        {
+          model: siswa,
+          as: "siswa",
+          attributes: ["nama_lengkap", "kelas"],
+        },
         {
           model: guru_bk,
           as: "guru_bk",
-          attributes: ["id", "nama"],
-          include: [
-            {
-              model: siswa.sequelize.models.users,
-              as: "akun",
-              attributes: ["email"],
-              required: false,
-            },
+          attributes: ["nama"],
+        },
+        {
+          model: DetailKonseling,
+          as: "detail_konseling",
+          attributes: [
+            "tgl_sesi",
+            "jam_sesi",
+            "balasan_untuk_siswa",
+            "catatan_guru_bk",
           ],
         },
       ],
-      attributes: [
-        "id",
-        "tgl_pengajuan",
-        "topik_konseling",
-        "deskripsi_masalah",
-        "status",
+      order: [
+        [
+          { model: DetailKonseling, as: "detail_konseling" },
+          "tgl_sesi",
+          "DESC",
+        ],
       ],
-      order: [["id", "DESC"]],
-      limit,
-      offset,
-      distinct: true,
+      limit: perPage,
+      offset: offset,
     });
 
-    const totalPages = Math.ceil(count / limit);
+    const data = riwayat.rows.map((item) => {
+      const detail = item.detail_konseling || {};
+      const baseData = {
+        id_konseling: item.id,
+        topik_konseling: item.topik_konseling,
+        jenis_sesi: item.jenis_sesi,
+        status: item.status,
+        tgl_pengajuan: item.tgl_pengajuan,
+        tgl_selesai: detail.tgl_sesi,
+        siswa: item.siswa,
+        guru_bk: item.guru_bk,
+        hasil_konseling: detail.balasan_untuk_siswa,
+      };
 
-    // Additional deduplication at application level
-    const uniqueKonselingData = konselingData.filter(
-      (konseling, index, self) =>
-        index === self.findIndex((k) => k.id === konseling.id)
-    );
+      if (role === "guru_bk") {
+        baseData.catatan_guru_bk = detail.catatan_guru_bk;
+      }
 
-    const formattedData = uniqueKonselingData.map((konseling) => ({
-      id_konseling: konseling.id,
-      tanggal: konseling.tgl_pengajuan,
-      topik: konseling.topik_konseling,
-      deskripsi: konseling.deskripsi_masalah,
-      status: konseling.status,
-      guruBK: {
-        id_guru: konseling.guru_bk?.id,
-        nama: konseling.guru_bk?.nama,
-        email: konseling.guru_bk?.akun?.email,
-      },
-    }));
+      return baseData;
+    });
+
+    if (riwayat.count === 0) {
+      return res.status(200).json({
+        status: "Success",
+        message: "Belum ada riwayat konseling yang selesai.",
+        isSuccess: true,
+        data: [],
+      });
+    }
 
     res.status(200).json({
       status: "Success",
-      message: "Berhasil mengambil riwayat konseling",
-      data: formattedData,
-      page,
-      limit,
-      totalData: uniqueKonselingData.length,
-      totalPages,
+      message: "Riwayat konseling berhasil diambil",
+      isSuccess: true,
+      totalData: riwayat.count,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(riwayat.count / perPage),
+      data,
     });
   } catch (error) {
     next(error);
