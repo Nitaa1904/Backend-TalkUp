@@ -193,17 +193,6 @@ router.get(
   #swagger.description = 'Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id_konseling'] = {
-  */
-router.put(
-  "/:id/selesai",
-  verifyToken,
-  verifyRole("guru_bk"),
-  /*
-  #swagger.tags = ['Konseling']
-  #swagger.summary = 'Tandai sesi konseling selesai oleh Guru BK' 
-  #swagger.description = 'Endpoint untuk Guru BK menandai sesi konseling sebagai selesai.'
-  #swagger.security = [{ "bearerAuth": [] }]
-  #swagger.parameters['id'] = {
       in: 'path',
       required: true,
       type: 'integer',
@@ -251,6 +240,67 @@ router.put(
   konselingController.getDetailKonseling
 );
 
+router.put(
+  "/:id/selesai",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Guru BK Menyelesaikan Sesi Konseling'
+  #swagger.description = `
+    Endpoint ini digunakan oleh Guru BK untuk menandai sesi konseling sebagai "Selesai".<br>
+    Hanya konseling yang sudah berstatus <b>Disetujui</b> yang dapat diselesaikan.<br><br>
+    Endpoint ini juga menyimpan hasil konseling, catatan guru BK, catatan siswa,
+    dan otomatis menambahkan tanggal selesai.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Konseling yang akan ditandai selesai'
+  }
+  #swagger.parameters['body'] = {
+      in: 'body',
+      required: true,
+      schema: {
+          hasil_konseling: "Siswa memahami strategi manajemen stres.",
+          catatan_guru_bk: "Siswa perlu mempraktikkan teknik relaksasi setiap hari.",
+          catatan_siswa: "Saya merasa lebih tenang setelah sesi."
+      },
+      description: 'Data akhir sesi konseling'
+  }
+  #swagger.responses[200] = {
+      description: 'Sesi konseling berhasil diselesaikan.',
+      schema: {
+          status: "Success",
+          message: "Sesi konseling berhasil diselesaikan",
+          isSuccess: true,
+          data: {
+            id_konseling: 10,
+            status: "Selesai",
+            detail_konseling: {
+              hasil_konseling: "Siswa memahami strategi manajemen stres.",
+              catatan_guru_bk: "Lanjutkan pemantauan perkembangan siswa.",
+              catatan_siswa: "Saya merasa lebih terbantu.",
+              tgl_selesai: "2025-11-15T10:00:00.000Z"
+            }
+          }
+      }
+  }
+  #swagger.responses[400] = {
+      description: 'Konseling belum disetujui sehingga tidak bisa diselesaikan.'
+  }
+  #swagger.responses[403] = {
+      description: 'Guru BK tidak memiliki akses untuk menyelesaikan konseling ini.'
+  }
+  #swagger.responses[404] = {
+      description: 'Data konseling tidak ditemukan.'
+  }
+  */
+  konselingController.markKonselingAsCompleted
+);
+
 router.get(
   "/jadwal",
   verifyToken,
@@ -294,7 +344,6 @@ router.get(
   }
   */
   konselingController.getJadwalKonseling
-  konselingController.markKonselingAsCompleted
 );
 
 module.exports = router;

@@ -575,5 +575,5 @@ module.exports = {
   getRiwayatKonseling,
   getDetailKonseling,
   getJadwalKonseling,
-  markKonselingAsCompleted
+  markKonselingAsCompleted,
 };

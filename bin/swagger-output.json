@@ -820,7 +820,7 @@
           "Konseling"
         ],
         "summary": "Daftar Pengajuan Konseling Siswa",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling   dari siswa bimbingannya yang masih berstatus \"Menunggu\".  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling \r  dari siswa bimbingannya yang masih berstatus \"Menunggu\".\r  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.\r  ",
         "parameters": [
           {
             "name": "id_guru_bk",
@@ -988,6 +988,35 @@
         "parameters": [
           {
             "name": "id_konseling",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/konseling/{id}/selesai": {
       "put": {
         "tags": [
@@ -1002,6 +1031,24 @@
             "required": true,
             "type": "integer",
             "description": "ID Konseling"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hasil_konseling": {
+                  "example": "any"
+                },
+                "catatan_guru_bk": {
+                  "example": "any"
+                },
+                "catatan_siswa": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -1132,7 +1179,7 @@
           "Konseling"
         ],
         "summary": "Daftar Jadwal Konseling Mendatang (Guru BK)",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling\r  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).\r  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.\r  ",
         "responses": {
           "200": {
             "description": "Daftar jadwal konseling mendatang berhasil diambil.",
@@ -1211,32 +1258,6 @@
               }
             }
           },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "hasil_konseling": {
-                  "example": "any"
-                },
-                "catatan_guru_bk": {
-                  "example": "any"
-                },
-                "catatan_siswa": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1244,7 +1265,7 @@
             "description": "Forbidden"
           },
           "404": {
-            "description": "Not Found"
+            "description": "Tidak ada jadwal konseling mendatang yang ditemukan."
           }
         },
         "security": [
