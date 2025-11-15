@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(255),
         allowNull: true,
       },
+      catatan_siswa: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
       balasan_untuk_siswa: {
         type: DataTypes.TEXT,
         allowNull: true,
@@ -46,6 +50,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      hasil_konseling: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+      },
+      tgl_selesai: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      }
     },
     {
       sequelize,

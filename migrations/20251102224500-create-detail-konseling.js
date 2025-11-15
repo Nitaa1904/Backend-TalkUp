@@ -13,16 +13,16 @@ module.exports = {
       id_konseling: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true, // One-to-one relationship with konseling
+        unique: true,
         references: {
-          model: 'konseling', // Nama tabel referensi
+          model: 'konseling',
           key: 'id'
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
       tgl_sesi: {
-        type: Sequelize.DATE, // TIMESTAMP WITH TIME ZONE
+        type: Sequelize.DATE,
         allowNull: true,
         comment: 'Tanggal dan waktu sesi disepakati (jika Status = Disetujui/Selesai)'
       },
@@ -36,6 +36,10 @@ module.exports = {
         allowNull: true,
         comment: 'Link meeting (Online) atau Ruang BK (Offline)'
       },
+      catatan_siswa: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
       balasan_untuk_siswa: {
         type: Sequelize.TEXT,
         allowNull: true
@@ -43,6 +47,14 @@ module.exports = {
       catatan_guru_bk: {
         type: Sequelize.TEXT,
         allowNull: true
+      },
+      hasil_konseling: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      tgl_selesai: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
       createdAt: {
         type: Sequelize.DATE,

@@ -123,4 +123,23 @@ router.put(
   konselingController.updateStatusKonseling
 );
 
+router.put(
+  "/:id/selesai",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Tandai sesi konseling selesai oleh Guru BK' 
+  #swagger.description = 'Endpoint untuk Guru BK menandai sesi konseling sebagai selesai.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id'] = {
+      in: 'path',
+      required: true,
+      type: 'integer',
+      description: 'ID Konseling'
+  }
+  */
+  konselingController.markKonselingAsCompleted
+);
+
 module.exports = router;
