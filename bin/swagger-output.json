@@ -988,6 +988,16 @@
         "parameters": [
           {
             "name": "id_konseling",
+    "/konseling/{id}/selesai": {
+      "put": {
+        "tags": [
+          "Konseling"
+        ],
+        "summary": "Tandai sesi konseling selesai oleh Guru BK",
+        "description": "Endpoint untuk Guru BK menandai sesi konseling sebagai selesai.",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "integer",
@@ -1201,6 +1211,32 @@
               }
             }
           },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hasil_konseling": {
+                  "example": "any"
+                },
+                "catatan_guru_bk": {
+                  "example": "any"
+                },
+                "catatan_siswa": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -1208,7 +1244,7 @@
             "description": "Forbidden"
           },
           "404": {
-            "description": "Tidak ada jadwal konseling mendatang yang ditemukan."
+            "description": "Not Found"
           }
         },
         "security": [

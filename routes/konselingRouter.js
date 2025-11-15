@@ -193,6 +193,17 @@ router.get(
   #swagger.description = 'Endpoint untuk mengambil detail lengkap satu pengajuan konseling berdasarkan id_konseling. Endpoint ini digunakan baik oleh siswa maupun guru BK, dengan data dan akses yang menyesuaikan peran pengguna.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id_konseling'] = {
+  */
+router.put(
+  "/:id/selesai",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Tandai sesi konseling selesai oleh Guru BK' 
+  #swagger.description = 'Endpoint untuk Guru BK menandai sesi konseling sebagai selesai.'
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['id'] = {
       in: 'path',
       required: true,
       type: 'integer',
@@ -283,6 +294,7 @@ router.get(
   }
   */
   konselingController.getJadwalKonseling
+  konselingController.markKonselingAsCompleted
 );
 
 module.exports = router;

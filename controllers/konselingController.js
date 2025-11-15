@@ -215,6 +215,82 @@ const updateStatusKonseling = async (req, res, next) => {
     next(error);
   }
 };
+const markKonselingAsCompleted = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { hasil_konseling, catatan_guru_bk, catatan_siswa } = req.body;
+
+    const konseling = await Konseling.findByPk(id, {
+      include: [{ model: DetailKonseling, as: "detail_konseling" }],
+    });
+    
+
+    if (!konseling) {
+      return res.status(404).json({
+        status: "Error",
+        message: "Data konseling tidak ditemukan.",
+        isSuccess: false,
+      });
+    }
+
+    if (konseling.status !== "Disetujui") {
+      return res.status(400).json({
+        status: "Error",
+        message: "Konseling hanya bisa diselesaikan jika status saat ini Disetujui.",
+        isSuccess: false,
+      });
+    }
+    if (req.user.role === "guru_bk" && req.user.id_ref != konseling.id_guru_bk) {
+      return res.status(403).json({
+        status: "Error",
+        message: "Akses ditolak. Anda hanya bisa menyelesaikan konseling siswa bimbingan Anda.",
+        isSuccess: false,
+      });
+    }
+
+    konseling.status = "Selesai";
+    await konseling.save();
+
+    let detailKonseling = konseling.detail_konseling;
+
+    if (!detailKonseling) {
+      detailKonseling = await DetailKonseling.create({
+        id_konseling: id,
+        hasil_konseling,
+        catatan_guru_bk,
+        catatan_siswa,
+        tgl_selesai: new Date(),
+      });
+    } else {
+      await detailKonseling.update({
+        hasil_konseling,
+        catatan_guru_bk,
+        catatan_siswa,
+        tgl_selesai: new Date(),
+      });
+    }
+    await detailKonseling.reload();
+
+    res.status(200).json({
+      status: "Success",
+      message: "Sesi konseling berhasil diselesaikan",
+      isSuccess: true,
+      data: {
+        id_konseling: konseling.id,
+        status: konseling.status,
+        detail_konseling: {
+          hasil_konseling: detailKonseling.hasil_konseling,
+          catatan_guru_bk: detailKonseling.catatan_guru_bk,
+          catatan_siswa: detailKonseling.catatan_siswa,
+          tgl_selesai: detailKonseling.tgl_selesai,
+        },
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 const getRiwayatKonseling = async (req, res, next) => {
   try {
@@ -499,4 +575,5 @@ module.exports = {
   getRiwayatKonseling,
   getDetailKonseling,
   getJadwalKonseling,
+  markKonselingAsCompleted
 };
