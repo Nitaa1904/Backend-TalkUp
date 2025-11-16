@@ -820,7 +820,7 @@
           "Konseling"
         ],
         "summary": "Daftar Pengajuan Konseling Siswa",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling   dari siswa bimbingannya yang masih berstatus \"Menunggu\".  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling \r  dari siswa bimbingannya yang masih berstatus \"Menunggu\".\r  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.\r  ",
         "parameters": [
           {
             "name": "id_guru_bk",
@@ -1116,13 +1116,130 @@
         ]
       }
     },
+    "/konseling/{id}/selesai": {
+      "put": {
+        "tags": [
+          "Konseling"
+        ],
+        "summary": "Guru BK Menyelesaikan Sesi Konseling",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk menandai sesi konseling sebagai \"Selesai\".<br>\r  Hanya konseling yang sudah berstatus <b>Disetujui</b> yang dapat diselesaikan.<br><br>\r  Endpoint ini juga menyimpan hasil konseling, catatan guru BK, catatan siswa,\r  dan otomatis menambahkan tanggal selesai.\r  ",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID Konseling yang akan ditandai selesai"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hasil_konseling": {
+                  "type": "string",
+                  "example": "Siswa memahami strategi manajemen stres."
+                },
+                "catatan_guru_bk": {
+                  "type": "string",
+                  "example": "Siswa perlu mempraktikkan teknik relaksasi setiap hari."
+                },
+                "catatan_siswa": {
+                  "type": "string",
+                  "example": "Saya merasa lebih tenang setelah sesi."
+                }
+              }
+            },
+            "description": "Data akhir sesi konseling"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sesi konseling berhasil diselesaikan.",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Success"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Sesi konseling berhasil diselesaikan"
+                },
+                "isSuccess": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id_konseling": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "Selesai"
+                    },
+                    "detail_konseling": {
+                      "type": "object",
+                      "properties": {
+                        "hasil_konseling": {
+                          "type": "string",
+                          "example": "Siswa memahami strategi manajemen stres."
+                        },
+                        "catatan_guru_bk": {
+                          "type": "string",
+                          "example": "Lanjutkan pemantauan perkembangan siswa."
+                        },
+                        "catatan_siswa": {
+                          "type": "string",
+                          "example": "Saya merasa lebih terbantu."
+                        },
+                        "tgl_selesai": {
+                          "type": "string",
+                          "example": "2025-11-15T10:00:00.000Z"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Konseling belum disetujui sehingga tidak bisa diselesaikan."
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Guru BK tidak memiliki akses untuk menyelesaikan konseling ini."
+          },
+          "404": {
+            "description": "Data konseling tidak ditemukan."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/konseling/jadwal": {
       "get": {
         "tags": [
           "Konseling"
         ],
         "summary": "Daftar Jadwal Konseling Mendatang (Guru BK)",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling\r  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).\r  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.\r  ",
         "responses": {
           "200": {
             "description": "Daftar jadwal konseling mendatang berhasil diambil.",
@@ -1370,46 +1487,34 @@
             "in": "query",
             "required": false,
             "type": "number",
-            "default": 25,
-            "description": "Limit untuk pagination. Jika tidak ada limit, maka akan menampilkan data sebanyak 25"
+            "default": 10,
+            "description": "Limit untuk pagination. Default: 10"
           },
           {
-            "name": "search",
+            "name": "keyword",
             "in": "query",
             "required": false,
             "type": "string",
-            "description": "Kata kunci untuk mencari diskusi berdasarkan judul atau konten"
+            "description": "Kata kunci untuk mencari diskusi berdasarkan judul atau isi"
           },
           {
-            "name": "filter",
+            "name": "sort",
             "in": "query",
             "required": false,
             "type": "string",
             "enum": [
-              "semua",
-              "terpopuler",
-              "terbaru"
+              "terbaru",
+              "terpopuler"
             ],
-            "default": "semua",
-            "description": "Filter untuk mengurutkan diskusi: semua (default), terpopuler (berdasarkan jumlah balasan), terbaru (berdasarkan tanggal pembuatan)"
+            "default": "terbaru",
+            "description": "Sorting untuk diskusi: terbaru (default), terpopuler (berdasarkan jumlah balasan)"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       }
     },
     "/diskusi/{id}": {
@@ -1537,12 +1642,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
