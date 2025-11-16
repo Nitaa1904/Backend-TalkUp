@@ -690,6 +690,165 @@
         }
       }
     },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Registrasi siswa baru",
+        "description": "Membuat akun siswa baru dan menyimpan data ke tabel users serta siswa.",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Data registrasi siswa",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nama_lengkap": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "kelas": {
+                  "type": "string",
+                  "example": "XI RPL 1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "john@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "Password123"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Registrasi berhasil",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Registrasi siswa berhasil"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "id_ref": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "role": {
+                          "type": "string",
+                          "example": "siswa"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        }
+                      }
+                    },
+                    "siswa": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 1
+                        },
+                        "nama_lengkap": {
+                          "type": "string",
+                          "example": "John Doe"
+                        },
+                        "kelas": {
+                          "type": "string",
+                          "example": "XI RPL 1"
+                        },
+                        "email_sekolah": {
+                          "type": "string",
+                          "example": "john@example.com"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "400": {
+            "description": "Validasi gagal",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Failed"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Validasi input gagal"
+                },
+                "isSuccess": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "errors": {
+                  "type": "array",
+                  "example": [
+                    "Error message"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "data": {}
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          },
+          "409": {
+            "description": "Email sudah terdaftar",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "Failed"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Email sudah terdaftar"
+                },
+                "isSuccess": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "data": {}
+              },
+              "xml": {
+                "name": "main"
+              }
+            }
+          }
+        }
+      }
+    },
     "/public/guru-bk": {
       "get": {
         "tags": [
