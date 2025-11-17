@@ -223,7 +223,6 @@ const markKonselingAsCompleted = async (req, res, next) => {
     const konseling = await Konseling.findByPk(id, {
       include: [{ model: DetailKonseling, as: "detail_konseling" }],
     });
-    
 
     if (!konseling) {
       return res.status(404).json({
@@ -236,14 +235,19 @@ const markKonselingAsCompleted = async (req, res, next) => {
     if (konseling.status !== "Disetujui") {
       return res.status(400).json({
         status: "Error",
-        message: "Konseling hanya bisa diselesaikan jika status saat ini Disetujui.",
+        message:
+          "Konseling hanya bisa diselesaikan jika status saat ini Disetujui.",
         isSuccess: false,
       });
     }
-    if (req.user.role === "guru_bk" && req.user.id_ref != konseling.id_guru_bk) {
+    if (
+      req.user.role === "guru_bk" &&
+      req.user.id_ref != konseling.id_guru_bk
+    ) {
       return res.status(403).json({
         status: "Error",
-        message: "Akses ditolak. Anda hanya bisa menyelesaikan konseling siswa bimbingan Anda.",
+        message:
+          "Akses ditolak. Anda hanya bisa menyelesaikan konseling siswa bimbingan Anda.",
         isSuccess: false,
       });
     }
@@ -291,42 +295,54 @@ const markKonselingAsCompleted = async (req, res, next) => {
   }
 };
 
-
 const getRiwayatKonseling = async (req, res, next) => {
   try {
     const { role, id_ref } = req.user;
     const { month, year, topik, page = 1, limit = 10 } = req.query;
 
-    const whereCondition = { status: "Selesai" };
+    const offset = (page - 1) * limit;
 
+    const whereClause = {
+      status: "Selesai",
+    };
+
+    // Validasi akses berdasarkan role
     if (role === "siswa") {
-      whereCondition.id_siswa = id_ref;
+      whereClause.id_siswa = id_ref;
     } else if (role === "guru_bk") {
-      whereCondition.id_guru_bk = id_ref;
-    } else {
-      return res.status(403).json({
-        status: "Forbidden",
-        message: "Peran tidak diizinkan mengakses riwayat konseling.",
-      });
+      whereClause.id_guru_bk = id_ref;
     }
 
-    if (month && year) {
-      const startDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0);
-      whereCondition["$detail_konseling.tgl_sesi$"] = {
-        [Op.between]: [startDate, endDate],
-      };
+    // Filter berdasarkan bulan & tahun tgl_selesai
+    if (month || year) {
+      whereClause["$detail_konseling.tgl_selesai$"] = {};
+      if (month)
+        whereClause["$detail_konseling.tgl_selesai$"][Op.and] = [
+          Sequelize.where(
+            Sequelize.fn(
+              "MONTH",
+              Sequelize.col("detail_konseling.tgl_selesai")
+            ),
+            month
+          ),
+        ];
+      if (year)
+        whereClause["$detail_konseling.tgl_selesai$"][Op.and] = [
+          ...(whereClause["$detail_konseling.tgl_selesai$"][Op.and] || []),
+          Sequelize.where(
+            Sequelize.fn("YEAR", Sequelize.col("detail_konseling.tgl_selesai")),
+            year
+          ),
+        ];
     }
 
+    // Filter berdasarkan topik
     if (topik) {
-      whereCondition.topik_konseling = topik;
+      whereClause.topik_konseling = { [Op.like]: `%${topik}%` };
     }
 
-    const offset = (parseInt(page) - 1) * parseInt(limit);
-    const perPage = parseInt(limit);
-
-    const riwayat = await Konseling.findAndCountAll({
-      where: whereCondition,
+    const { rows, count } = await Konseling.findAndCountAll({
+      where: whereClause,
       include: [
         {
           model: siswa,
@@ -342,62 +358,56 @@ const getRiwayatKonseling = async (req, res, next) => {
           model: DetailKonseling,
           as: "detail_konseling",
           attributes: [
-            "tgl_sesi",
-            "jam_sesi",
-            "balasan_untuk_siswa",
+            "hasil_konseling",
             "catatan_guru_bk",
+            "catatan_siswa",
+            "tgl_selesai",
           ],
         },
       ],
       order: [
         [
           { model: DetailKonseling, as: "detail_konseling" },
-          "tgl_sesi",
+          "tgl_selesai",
           "DESC",
         ],
       ],
-      limit: perPage,
-      offset: offset,
+      limit: parseInt(limit),
+      offset,
     });
 
-    const data = riwayat.rows.map((item) => {
-      const detail = item.detail_konseling || {};
-      const baseData = {
-        id_konseling: item.id,
-        topik_konseling: item.topik_konseling,
-        jenis_sesi: item.jenis_sesi,
-        status: item.status,
-        tgl_pengajuan: item.tgl_pengajuan,
-        tgl_selesai: detail.tgl_sesi,
-        siswa: item.siswa,
-        guru_bk: item.guru_bk,
-        hasil_konseling: detail.balasan_untuk_siswa,
-      };
-
-      if (role === "guru_bk") {
-        baseData.catatan_guru_bk = detail.catatan_guru_bk;
-      }
-
-      return baseData;
-    });
-
-    if (riwayat.count === 0) {
-      return res.status(200).json({
-        status: "Success",
-        message: "Belum ada riwayat konseling yang selesai.",
-        isSuccess: true,
-        data: [],
-      });
-    }
+    // Format response sesuai role
+    const formatted = rows.map((item) => ({
+      id_konseling: item.id,
+      topik_konseling: item.topik_konseling,
+      jenis_sesi: item.jenis_sesi,
+      status: item.status,
+      tgl_pengajuan: item.tgl_pengajuan,
+      tgl_selesai: item.detail_konseling?.tgl_selesai,
+      siswa: {
+        nama_lengkap: item.siswa?.nama_lengkap,
+        kelas: item.siswa?.kelas,
+      },
+      guru_bk: {
+        nama: item.guru_bk?.nama,
+      },
+      hasil_konseling: item.detail_konseling?.hasil_konseling,
+      catatan_guru_bk:
+        role === "guru_bk" ? item.detail_konseling?.catatan_guru_bk : undefined, // siswa tidak boleh lihat catatan guru
+      catatan_siswa: item.detail_konseling?.catatan_siswa,
+    }));
 
     res.status(200).json({
       status: "Success",
       message: "Riwayat konseling berhasil diambil",
       isSuccess: true,
-      totalData: riwayat.count,
-      currentPage: parseInt(page),
-      totalPages: Math.ceil(riwayat.count / perPage),
-      data,
+      pagination: {
+        total_data: count,
+        current_page: parseInt(page),
+        limit: parseInt(limit),
+        total_page: Math.ceil(count / limit),
+      },
+      data: formatted,
     });
   } catch (error) {
     next(error);
