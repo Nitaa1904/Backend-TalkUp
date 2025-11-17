@@ -45,93 +45,70 @@ router.post(
 );
 
 router.get(
+  "/jadwal",
+  verifyToken,
+  verifyRole("guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Daftar Jadwal Konseling Mendatang (Guru BK)'
+  #swagger.description = `
+    Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling
+    yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).
+    Data ini digunakan pada halaman "Jadwal Konseling" di frontend Guru BK.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.responses[200] = {
+      description: 'Daftar jadwal konseling mendatang berhasil diambil.',
+      schema: {
+        status: "Success",
+        message: "Daftar jadwal konseling mendatang berhasil diambil",
+        data: [
+          {
+            id: 12,
+            topik_konseling: "Kedisiplinan",
+            status: "Disetujui",
+            id_siswa: 5,
+            siswa: {
+              nama_lengkap: "Rafi Pratama",
+              kelas: "XI RPL 2"
+            },
+            detail_konseling: {
+              tgl_konseling: "2025-11-12",
+              jam_sesi: "09:00",
+              jenis_sesi_final: "Offline",
+              link_atau_ruang: "Ruang BK Lt.2"
+            }
+          }
+        ]
+      }
+  }
+  #swagger.responses[404] = {
+      description: 'Tidak ada jadwal konseling mendatang yang ditemukan.'
+  }
+  */
+  konselingController.getJadwalKonseling
+);
+
+router.get(
   "/riwayat",
   verifyToken,
-  verifyRole(["siswa", "guru_bk"]),
+  verifyRole("siswa", "guru_bk"),
   /*
   #swagger.tags = ['Konseling']
   #swagger.summary = 'Riwayat Konseling'
   #swagger.description = `
-  Endpoint ini digunakan untuk menampilkan daftar seluruh pengajuan konseling
-  yang telah berstatus "Selesai". Data yang ditampilkan disesuaikan dengan peran pengguna:
-  - **Siswa**: hanya dapat melihat riwayat konseling miliknya sendiri.
-  - **Guru BK**: dapat melihat riwayat seluruh siswa bimbingannya.
-
-  Tersedia filter opsional berdasarkan bulan, tahun, dan topik konseling.
-  Hasil ditampilkan secara terurut dari yang terbaru (tgl_sesi paling akhir).
+    Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
+    • Siswa: hanya melihat riwayat miliknya.<br>
+    • Guru BK: hanya melihat riwayat bimbingan.<br><br>
+    Dapat difilter berdasarkan bulan, tahun, dan topik.
   `
   #swagger.security = [{ "bearerAuth": [] }]
-
-  #swagger.parameters['month'] = {
-      in: 'query',
-      description: 'Filter berdasarkan bulan (opsional)',
-      required: false,
-      type: 'integer',
-      example: 11
-  }
-
-  #swagger.parameters['year'] = {
-      in: 'query',
-      description: 'Filter berdasarkan tahun (opsional)',
-      required: false,
-      type: 'integer',
-      example: 2025
-  }
-
-  #swagger.parameters['topik'] = {
-      in: 'query',
-      description: 'Filter berdasarkan topik konseling (opsional)',
-      required: false,
-      type: 'string',
-      example: 'Karir'
-  }
-
-  #swagger.parameters['page'] = {
-      in: 'query',
-      description: 'Nomor halaman data (pagination)',
-      required: false,
-      type: 'integer',
-      example: 1
-  }
-
-  #swagger.parameters['limit'] = {
-      in: 'query',
-      description: 'Jumlah data per halaman (pagination)',
-      required: false,
-      type: 'integer',
-      example: 10
-  }
-
-  #swagger.responses[200] = {
-      description: 'Berhasil menampilkan daftar riwayat konseling yang telah selesai',
-      schema: {
-          status: 'Success',
-          message: 'Riwayat konseling berhasil diambil',
-          isSuccess: true,
-          totalData: 2,
-          currentPage: 1,
-          totalPages: 1,
-          data: [
-              {
-                  id_konseling: 12,
-                  topik_konseling: 'Karir dan Rencana Studi Lanjut',
-                  jenis_sesi: 'Offline',
-                  status: 'Selesai',
-                  tgl_pengajuan: '2025-09-10T07:00:00.000Z',
-                  tgl_selesai: '2025-09-15T09:00:00.000Z',
-                  siswa: {
-                      nama_lengkap: 'Nadia Putri Rahmaniar',
-                      kelas: 'XI TKJ 4'
-                  },
-                  guru_bk: {
-                      nama: 'Bu Rina Yuliana'
-                  },
-                  hasil_konseling: 'Siswa telah memahami pilihan jurusan sesuai minat.',
-                  catatan_guru_bk: 'Perlu follow-up dalam 2 minggu.'
-              }
-          ]
-      }
-  }
+  #swagger.parameters['month'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['year'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['topik'] = { in: 'query', required: false, type: 'string' }
+  #swagger.parameters['page'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['limit'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.responses[200] = { description: 'Data riwayat berhasil diambil' }
   */
   konselingController.getRiwayatKonseling
 );
@@ -369,48 +346,27 @@ router.put(
 );
 
 router.get(
-  "/jadwal",
+  "/riwayat",
   verifyToken,
-  verifyRole("guru_bk"),
+  verifyRole("siswa", "guru_bk"),
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Daftar Jadwal Konseling Mendatang (Guru BK)'
+  #swagger.summary = 'Riwayat Konseling'
   #swagger.description = `
-    Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling
-    yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).
-    Data ini digunakan pada halaman "Jadwal Konseling" di frontend Guru BK.
+    Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
+    • Siswa: hanya melihat riwayat miliknya.<br>
+    • Guru BK: hanya melihat riwayat bimbingan.<br><br>
+    Dapat difilter berdasarkan bulan, tahun, dan topik.
   `
   #swagger.security = [{ "bearerAuth": [] }]
-  #swagger.responses[200] = {
-      description: 'Daftar jadwal konseling mendatang berhasil diambil.',
-      schema: {
-        status: "Success",
-        message: "Daftar jadwal konseling mendatang berhasil diambil",
-        data: [
-          {
-            id: 12,
-            topik_konseling: "Kedisiplinan",
-            status: "Disetujui",
-            id_siswa: 5,
-            siswa: {
-              nama_lengkap: "Rafi Pratama",
-              kelas: "XI RPL 2"
-            },
-            detail_konseling: {
-              tgl_konseling: "2025-11-12",
-              jam_sesi: "09:00",
-              jenis_sesi_final: "Offline",
-              link_atau_ruang: "Ruang BK Lt.2"
-            }
-          }
-        ]
-      }
-  }
-  #swagger.responses[404] = {
-      description: 'Tidak ada jadwal konseling mendatang yang ditemukan.'
-  }
+  #swagger.parameters['month'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['year'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['topik'] = { in: 'query', required: false, type: 'string' }
+  #swagger.parameters['page'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['limit'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.responses[200] = { description: 'Data riwayat berhasil diambil' }
   */
-  konselingController.getJadwalKonseling
+  konselingController.getRiwayatKonseling
 );
 
 module.exports = router;
