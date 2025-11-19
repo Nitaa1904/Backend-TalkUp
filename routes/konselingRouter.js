@@ -227,6 +227,57 @@ router.put(
 );
 
 router.get(
+  "/riwayat",
+  verifyToken,
+  verifyRole("siswa", "guru_bk"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Riwayat Konseling'
+  #swagger.description = `
+    Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
+    • Siswa: hanya melihat riwayat miliknya.<br>
+    • Guru BK: hanya melihat riwayat bimbingan.<br><br>
+    Dapat difilter berdasarkan bulan, tahun, dan topik.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.parameters['month'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['year'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['topik'] = { in: 'query', required: false, type: 'string' }
+  #swagger.parameters['page'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.parameters['limit'] = { in: 'query', required: false, type: 'integer' }
+  #swagger.responses[200] = { description: 'Data riwayat berhasil diambil' }
+  */
+  konselingController.getRiwayatKonseling
+);
+
+router.get(
+  "/riwayat/siswa",
+  verifyToken,
+  verifyRole("siswa"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Riwayat Konseling Siswa (Semua Status)'
+  #swagger.description = `
+    Mengambil seluruh riwayat pengajuan konseling milik siswa.<br><br>
+
+    Status yang ditampilkan:<br>
+    • <b>Menunggu</b><br>
+    • <b>Disetujui</b><br>
+    • <b>Selesai</b><br><br>
+
+    Catatan:<br>
+    • Endpoint ini hanya dapat diakses oleh siswa.<br>
+    • Tidak ada filter bulan/tahun, karena menampilkan semua status.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.responses[200] = { 
+    description: 'Data riwayat konseling siswa berhasil diambil'
+  }
+  */
+  konselingController.getRiwayatKonselingSiswa
+);
+
+router.get(
   "/:id_konseling",
   verifyToken,
   verifyRole(["siswa", "guru_bk"]),
@@ -343,30 +394,6 @@ router.put(
   }
   */
   konselingController.markKonselingAsCompleted
-);
-
-router.get(
-  "/riwayat",
-  verifyToken,
-  verifyRole("siswa", "guru_bk"),
-  /*
-  #swagger.tags = ['Konseling']
-  #swagger.summary = 'Riwayat Konseling'
-  #swagger.description = `
-    Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
-    • Siswa: hanya melihat riwayat miliknya.<br>
-    • Guru BK: hanya melihat riwayat bimbingan.<br><br>
-    Dapat difilter berdasarkan bulan, tahun, dan topik.
-  `
-  #swagger.security = [{ "bearerAuth": [] }]
-  #swagger.parameters['month'] = { in: 'query', required: false, type: 'integer' }
-  #swagger.parameters['year'] = { in: 'query', required: false, type: 'integer' }
-  #swagger.parameters['topik'] = { in: 'query', required: false, type: 'string' }
-  #swagger.parameters['page'] = { in: 'query', required: false, type: 'integer' }
-  #swagger.parameters['limit'] = { in: 'query', required: false, type: 'integer' }
-  #swagger.responses[200] = { description: 'Data riwayat berhasil diambil' }
-  */
-  konselingController.getRiwayatKonseling
 );
 
 module.exports = router;

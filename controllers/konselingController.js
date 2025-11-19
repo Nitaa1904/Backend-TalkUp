@@ -578,6 +578,78 @@ const getJadwalKonseling = async (req, res, next) => {
   }
 };
 
+const getRiwayatKonselingSiswa = async (req, res, next) => {
+  try {
+    const { id_ref, role } = req.user;
+
+    if (role !== "siswa") {
+      return res.status(403).json({
+        status: "Error",
+        message: "Akses ditolak. Endpoint ini hanya untuk siswa.",
+      });
+    }
+
+    const riwayat = await Konseling.findAll({
+      where: { id_siswa: id_ref },
+      include: [
+        {
+          model: guru_bk,
+          as: "guru_bk",
+          attributes: ["id", "nama"],
+        },
+        {
+          model: DetailKonseling,
+          as: "detail_konseling",
+          required: false,
+          attributes: [
+            "tgl_sesi",
+            "jam_sesi",
+            "link_atau_ruang",
+            "balasan_untuk_siswa",
+            "hasil_konseling",
+            "catatan_guru_bk",
+            "catatan_siswa",
+            "tgl_selesai",
+          ],
+        },
+      ],
+      order: [["tgl_pengajuan", "DESC"]],
+    });
+
+    const formatted = riwayat.map((k) => ({
+      id_konseling: k.id,
+      topik_konseling: k.topik_konseling,
+      jenis_sesi: k.jenis_sesi,
+      status: k.status,
+      tgl_pengajuan: k.tgl_pengajuan,
+      guru_bk: {
+        id: k.guru_bk?.id,
+        nama: k.guru_bk?.nama,
+      },
+      detail_konseling: k.detail_konseling
+        ? {
+            tgl_sesi: k.detail_konseling.tgl_sesi,
+            jam_sesi: k.detail_konseling.jam_sesi,
+            link_atau_ruang: k.detail_konseling.link_atau_ruang,
+            balasan_untuk_siswa: k.detail_konseling.balasan_untuk_siswa,
+            hasil_konseling: k.detail_konseling.hasil_konseling,
+            catatan_siswa: k.detail_konseling.catatan_siswa,
+            tgl_selesai: k.detail_konseling.tgl_selesai,
+          }
+        : null,
+    }));
+
+    res.status(200).json({
+      status: "Success",
+      message: "Riwayat semua pengajuan konseling berhasil diambil",
+      isSuccess: true,
+      data: formatted,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createKonseling,
   getKonselingByGuruBk,
@@ -586,4 +658,5 @@ module.exports = {
   getDetailKonseling,
   getJadwalKonseling,
   markKonselingAsCompleted,
+  getRiwayatKonselingSiswa,
 };
