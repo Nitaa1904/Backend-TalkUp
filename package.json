@@ -16,7 +16,7 @@
     "db:seed:undo": "sequelize db:seed:undo"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   },
   "keywords": [],
   "author": "",
