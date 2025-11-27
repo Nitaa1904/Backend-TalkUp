@@ -30,6 +30,13 @@ sequelize
 app.get("/api/v1/health-check", systemController.healtcheck);
 
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "Success",
+    message: "Welcome to TalkUp API",
+    documentation: "/api-docs", // (Nanti kalau swagger udah nyala)
+  });
+});
 
 app.use("/api/v1", router);
 
