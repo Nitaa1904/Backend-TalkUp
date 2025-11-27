@@ -37,4 +37,10 @@ app.use("/api-docs", docsRouter);
 
 app.use(errorHandling);
 
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
+
 module.exports = app;
