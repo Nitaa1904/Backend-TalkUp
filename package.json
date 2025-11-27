@@ -15,6 +15,9 @@
     "db:seed": "sequelize db:seed:all",
     "db:seed:undo": "sequelize db:seed:undo"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
