@@ -1,0 +1,4 @@
+{
+  "watch": ["routes", "controllers", "models", "server.js"],
+  "ignore": ["docs/swagger-output.json"]
+}

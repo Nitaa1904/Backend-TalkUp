@@ -2,10 +2,12 @@ require("dotenv").config();
 
 const express = require("express");
 const morgan = require("morgan");
+const swaggerFile = require("./docs/swagger-output.json");
+const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 const router = require("./routes");
 const docsRouter = require("./routes/documentationRouter");
-const errorHandling = require("./middleware/errorHandling");
+const errorHandling = require("./middlewares/errorHandling");
 
 const { systemController } = require("./controllers");
 const { sequelize } = require("./models");
@@ -26,6 +28,8 @@ sequelize
   .catch((err) => console.log("Error: " + err));
 
 app.get("/api/v1/health-check", systemController.healtcheck);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 app.use("/api/v1", router);
 
