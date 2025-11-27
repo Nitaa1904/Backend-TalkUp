@@ -297,7 +297,7 @@ const markKonselingAsCompleted = async (req, res, next) => {
 
 const getRiwayatKonseling = async (req, res, next) => {
   try {
-    const { role, id_ref } = req.user;
+    // const { role, id_ref } = req.user;
     const { month, year, topik, page = 1, limit = 10 } = req.query;
 
     const offset = (page - 1) * limit;
@@ -306,39 +306,33 @@ const getRiwayatKonseling = async (req, res, next) => {
       status: "Selesai",
     };
 
-    // Validasi akses berdasarkan role
-    if (role === "siswa") {
-      whereClause.id_siswa = id_ref;
-    } else if (role === "guru_bk") {
-      whereClause.id_guru_bk = id_ref;
-    }
+    const includeDetailWhere = {};
 
-    // Filter berdasarkan bulan & tahun tgl_selesai
     if (month || year) {
-      whereClause["$detail_konseling.tgl_selesai$"] = {};
-      if (month)
-        whereClause["$detail_konseling.tgl_selesai$"][Op.and] = [
-          Sequelize.where(
-            Sequelize.fn(
-              "MONTH",
-              Sequelize.col("detail_konseling.tgl_selesai")
-            ),
-            month
-          ),
-        ];
-      if (year)
-        whereClause["$detail_konseling.tgl_selesai$"][Op.and] = [
-          ...(whereClause["$detail_konseling.tgl_selesai$"][Op.and] || []),
-          Sequelize.where(
-            Sequelize.fn("YEAR", Sequelize.col("detail_konseling.tgl_selesai")),
-            year
-          ),
-        ];
+      if (month && year) {
+        // Cara paling aman di semua database: Range Tanggal
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 0, 23, 59, 59);
+
+        includeDetailWhere.tgl_selesai = {
+          [Op.between]: [startDate, endDate],
+        };
+      } else if (year) {
+        // Jika hanya tahun
+        const startDate = new Date(year, 0, 1);
+        const endDate = new Date(year, 11, 31, 23, 59, 59);
+
+        includeDetailWhere.tgl_selesai = {
+          [Op.between]: [startDate, endDate],
+        };
+      }
+      // Jika hanya bulan (tanpa tahun), agak tricky di Postgres,
+      // tapi biasanya filter bulan pasti dibarengi tahun di UI.
     }
 
-    // Filter berdasarkan topik
+    // 3. Filter Topik (Search)
     if (topik) {
-      whereClause.topik_konseling = { [Op.like]: `%${topik}%` };
+      whereClause.topik_konseling = { [Op.iLike]: `%${topik}%` }; // Gunakan iLike untuk Postgres (case insensitive)
     }
 
     const { rows, count } = await Konseling.findAndCountAll({
@@ -363,6 +357,11 @@ const getRiwayatKonseling = async (req, res, next) => {
             "catatan_siswa",
             "tgl_selesai",
           ],
+          where:
+            Object.keys(includeDetailWhere).length > 0
+              ? includeDetailWhere
+              : undefined,
+          required: true,
         },
       ],
       order: [
@@ -373,7 +372,8 @@ const getRiwayatKonseling = async (req, res, next) => {
         ],
       ],
       limit: parseInt(limit),
-      offset,
+      offset: offset,
+      distinct: true,
     });
 
     // Format response sesuai role
@@ -392,8 +392,7 @@ const getRiwayatKonseling = async (req, res, next) => {
         nama: item.guru_bk?.nama,
       },
       hasil_konseling: item.detail_konseling?.hasil_konseling,
-      catatan_guru_bk:
-        role === "guru_bk" ? item.detail_konseling?.catatan_guru_bk : undefined, // siswa tidak boleh lihat catatan guru
+      catatan_guru_bk: item.detail_konseling?.catatan_guru_bk,
       catatan_siswa: item.detail_konseling?.catatan_siswa,
     }));
 

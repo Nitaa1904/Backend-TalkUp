@@ -92,14 +92,12 @@ router.get(
 router.get(
   "/riwayat",
   verifyToken,
-  verifyRole("siswa", "guru_bk"),
+  verifyRole("guru_bk"),
   /*
   #swagger.tags = ['Konseling']
   #swagger.summary = 'Riwayat Konseling'
   #swagger.description = `
-    Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
-    • Siswa: hanya melihat riwayat miliknya.<br>
-    • Guru BK: hanya melihat riwayat bimbingan.<br><br>
+    Guru bk Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>
     Dapat difilter berdasarkan bulan, tahun, dan topik.
   `
   #swagger.security = [{ "bearerAuth": [] }]
